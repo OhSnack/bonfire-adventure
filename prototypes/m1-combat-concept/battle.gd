@@ -15,11 +15,11 @@ const CARDS := {
 const DECK := ["swing", "swing", "heavy", "ember_swing", "guard", "guard", "guard", "brace", "sniff", "spark"]
 # Shed intents cycle in this order.
 const INTENTS := [
-	{"text": "Attack 4, apply Weak 2", "attack": 4, "block": 0, "weak": 2, "ignite": 0},
-	{"text": "Attack 5, gain 6 block", "attack": 5, "block": 6, "weak": 0, "ignite": 0},
-	{"text": "Attack 3, apply 8 Ignite", "attack": 3, "block": 0, "weak": 0, "ignite": 8},
+	{"text": "Attack 5, apply Weak 2", "attack": 5, "block": 0, "weak": 2, "ignite": 0},
+	{"text": "Attack 6, gain 6 block", "attack": 6, "block": 6, "weak": 0, "ignite": 0},
+	{"text": "Attack 4, apply 8 Ignite", "attack": 4, "block": 0, "weak": 0, "ignite": 8},
 ]
-const ENERGY := 4
+const ENERGY := 3
 const DRAW := 5
 const BLOCK_CAP := 3
 const CHARGE_MAX := 4
