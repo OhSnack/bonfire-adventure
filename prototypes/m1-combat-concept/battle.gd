@@ -18,12 +18,12 @@ const DECK := ["swing", "swing", "heavy", "ember_swing", "greater", "guard", "gu
 const INTENTS := [
 	{"text": "Attack 1, apply 3 Ignite + Weak 2", "attack": 1, "block": 0, "weak": 2, "ignite": 3},
 	{"text": "Attack 2, apply 3 Ignite, gain 6 block", "attack": 2, "block": 6, "weak": 0, "ignite": 3},
-	{"text": "Apply 12 Ignite", "attack": 0, "block": 0, "weak": 0, "ignite": 12},
+	{"text": "Apply 8 Ignite", "attack": 0, "block": 0, "weak": 0, "ignite": 8},
 ]
 const ENERGY := 4
 const DRAW := 6
 const BLOCK_CAP := 3
-const CHARGE_MAX := 4
+const CHARGE_MAX := 3
 
 var rng := RandomNumberGenerator.new()
 var hero := {}
@@ -45,7 +45,7 @@ var log_lines: Array = []
 func start(seed_value: int) -> void:
 	rng.seed = seed_value
 	hero = {"hp": 40, "max": 40, "block": 0, "weak": 0, "ignite": 0}
-	shed = {"hp": 35, "max": 35, "block": 0, "weak": 0, "ignite": 0}
+	shed = {"hp": 30, "max": 30, "block": 0, "weak": 0, "ignite": 0}
 	draw_pile = DECK.duplicate()
 	_shuffle(draw_pile)
 	hand = []
