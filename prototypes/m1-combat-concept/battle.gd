@@ -4,9 +4,9 @@
 extends RefCounted
 
 const CARDS := {
-	"swing": {"name": "Swing", "cost": 1, "type": "attack", "desc": "Deal 6 damage"},
-	"heavy": {"name": "Heavy Swing", "cost": 2, "type": "attack", "desc": "Deal 13 damage"},
-	"ember_swing": {"name": "Ember Swing", "cost": 1, "type": "attack", "desc": "Deal 3 damage\nApply 3 Ignite"},
+	"swing": {"name": "Swing", "cost": 1, "type": "attack", "desc": "Deal 5 damage"},
+	"heavy": {"name": "Heavy Swing", "cost": 2, "type": "attack", "desc": "Deal 12 damage"},
+	"ember_swing": {"name": "Ember Swing", "cost": 1, "type": "attack", "desc": "Deal 2 damage\nApply 3 Ignite"},
 	"guard": {"name": "Guard", "cost": 1, "type": "skill", "desc": "Gain 5 block"},
 	"brace": {"name": "Brace", "cost": 2, "type": "skill", "desc": "Gain 9 block"},
 	"sniff": {"name": "Sniff", "cost": 0, "type": "skill", "desc": "Draw 1\nSee intent 2 turns ahead"},
@@ -79,10 +79,10 @@ func play(i: int) -> void:
 	energy -= c.cost
 	hand.remove_at(i)
 	match id:
-		"swing": _hit_shed(6)
-		"heavy": _hit_shed(13)
+		"swing": _hit_shed(5)
+		"heavy": _hit_shed(12)
 		"ember_swing":
-			_hit_shed(3)
+			_hit_shed(2)
 			shed.ignite += 3
 		"guard": hero.block += 5
 		"brace": hero.block += 9

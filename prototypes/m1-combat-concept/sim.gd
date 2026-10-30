@@ -56,9 +56,9 @@ func _play_turn(b, policy: String, pick: RandomNumberGenerator) -> void:
 			var score := 0.0
 			match id:
 				"spark", "sniff": score = 100
-				"heavy": score = 13
-				"swing": score = 6.5
-				"ember_swing": score = 7
+				"heavy": score = 12
+				"swing": score = 5.5
+				"ember_swing": score = 6
 				"guard": score = 6 if b.hero.block < incoming else 0.5
 				"brace": score = 5 if b.hero.block < incoming else 0.4
 			if score > best_score:
