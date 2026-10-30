@@ -36,9 +36,7 @@ func _init() -> void:
 # careless: plays random affordable cards, sometimes stops early.
 # greedy: zero-cost first, blocks only against an attack, then highest-damage attacks.
 func _play_turn(b, policy: String, pick: RandomNumberGenerator) -> void:
-	var plays := 0
-	while b.result == "" and plays < 30:
-		plays += 1
+	while b.result == "":
 		var playable: Array = []
 		for i in b.hand.size():
 			if b.can_play(i):

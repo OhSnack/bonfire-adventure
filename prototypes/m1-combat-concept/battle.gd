@@ -104,9 +104,10 @@ func play(i: int) -> void:
 		if charge >= CHARGE_MAX:
 			charge = 0
 			unleashes += 1
+			# Hits every enemy; the prototype has one.
 			shed.ignite += 3
 			shed.weak += 1
-			_log("EMBER FRAGMENT UNLEASHES: 3 Ignite + Weak 1 on the Hellhound")
+			_log("EMBER FRAGMENT UNLEASHES: 3 Ignite + Weak 1 on all enemies")
 	_check_end()
 
 

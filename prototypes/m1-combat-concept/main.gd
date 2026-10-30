@@ -145,7 +145,7 @@ func _refresh() -> void:
 	intent_label.text = "Intent: " + it
 	if b.sniffed_turn == b.turn:
 		intent_label.text += "\nThen: " + b.intent_after_next().text
-	frag_label.text = "EMBER FRAGMENT\nCharge %d / %d  [%s%s]\n+1 per attack\nAt 4: 3 Ignite + Weak 1" % [
+	frag_label.text = "EMBER FRAGMENT\nCharge %d / %d  [%s%s]\nAt 4 attacks, all enemies\nget 3 Ignite + Weak 1" % [
 		b.charge, Battle.CHARGE_MAX, "#".repeat(b.charge), "-".repeat(Battle.CHARGE_MAX - b.charge)]
 	energy_label.text = "Energy %d / %d" % [b.energy, Battle.ENERGY]
 	piles_label.text = "Draw %d · Discard %d · Faded %d" % [b.draw_pile.size(), b.discard.size(), b.faded.size()]

@@ -25,7 +25,8 @@ Riskiest assumption: auto-unleash is readable and creates priming decisions at t
   Attack damage is 1 lower than the Content tab (owner change, 2026-10-30).
 - Enemy: Hellhound (skeletal dog with a fiery plume; was the Shed), 35 HP, intents cycle:
   attack 1 + 3 Ignite + Weak 2 → attack 2 + 3 Ignite + gain 6 block → apply 12 Ignite.
-- Ember fragment: +1 charge per attack card; at 4 it fires mid-turn: 3 Ignite + Weak 1 on the Hellhound.
+- Ember fragment: +1 charge per attack card; at 4 it fires mid-turn: 3 Ignite + Weak 1 on every enemy.
+- Between battles (not in this one-battle build): the hero heals 10% of max HP (4).
 - Drag attacks onto the Hellhound; drag skills above the line.
 - Placeholders: the enemy's block resets each turn; Weak N lasts N of the target's turns
   (−25%, rounded down); Ignite ticks at the start of its target's turn, then halves;
