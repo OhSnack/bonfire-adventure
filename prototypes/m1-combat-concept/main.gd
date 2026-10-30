@@ -4,7 +4,7 @@
 extends Control
 
 const Battle := preload("res://battle.gd")
-const CARD_SIZE := Vector2(150, 200)
+const CARD_SIZE := Vector2(140, 200)
 const HAND_Y := 500.0
 const PLAY_LINE_Y := 450.0
 
@@ -40,12 +40,14 @@ func _ready() -> void:
 	hero_label = _label(Vector2(14, 10), 20, hero_panel)
 	shed_panel = _panel(Vector2(900, 110), Vector2(280, 200), Color("5a2e2e"))
 	shed_label = _label(Vector2(14, 10), 20, shed_panel)
-	intent_label = _label(Vector2(900, 62), 22)
+	intent_label = _label(Vector2(860, 22), 20)
+	intent_label.autowrap_mode = TextServer.AUTOWRAP_WORD
+	intent_label.size = Vector2(400, 84)
 	intent_label.add_theme_color_override("font_color", Color("ffd27a"))
-	frag_panel = _panel(Vector2(500, 130), Vector2(280, 130), Color("4a3a1e"))
+	frag_panel = _panel(Vector2(500, 120), Vector2(280, 150), Color("4a3a1e"))
 	frag_label = _label(Vector2(14, 10), 20, frag_panel)
-	frag_label.size = Vector2(252, 110)
 	frag_label.autowrap_mode = TextServer.AUTOWRAP_WORD
+	frag_label.size = Vector2(252, 130)
 	log_label = _label(Vector2(420, 285), 16)
 	log_label.add_theme_color_override("font_color", Color("c9c2d6"))
 	hint_line = ColorRect.new()
@@ -54,10 +56,10 @@ func _ready() -> void:
 	hint_line.size = Vector2(1280, 2)
 	add_child(hint_line)
 	var hint := _label(Vector2(20, PLAY_LINE_Y - 26), 15)
-	hint.text = "Drag attacks onto the Shed · drag skills above this line"
+	hint.text = "Drag attacks onto the Hellhound · drag skills above this line"
 	hint.add_theme_color_override("font_color", Color(1, 1, 1, 0.4))
-	energy_label = _label(Vector2(20, 560), 34)
-	piles_label = _label(Vector2(20, 610), 16)
+	energy_label = _label(Vector2(1110, 515), 26)
+	piles_label = _label(Vector2(20, 462), 15)
 	end_btn = Button.new()
 	end_btn.text = "End turn"
 	end_btn.position = Vector2(1110, 600)
@@ -134,7 +136,7 @@ func _refresh() -> void:
 	hero_label.text = "YOU\nHP %d / %d\nBlock %d%s%s" % [b.hero.hp, b.hero.max, b.hero.block,
 		"\nWeak %d (-25%% damage)" % b.hero.weak if b.hero.weak > 0 else "",
 		"\nIgnite %d" % b.hero.ignite if b.hero.ignite > 0 else ""]
-	shed_label.text = "SHED\nHP %d / %d\nBlock %d%s%s" % [b.shed.hp, b.shed.max, b.shed.block,
+	shed_label.text = "HELLHOUND\nHP %d / %d\nBlock %d%s%s" % [b.shed.hp, b.shed.max, b.shed.block,
 		"\nWeak %d" % b.shed.weak if b.shed.weak > 0 else "",
 		"\nIgnite %d (burns at its turn)" % b.shed.ignite if b.shed.ignite > 0 else ""]
 	var it: String = b.intent().text
@@ -143,7 +145,7 @@ func _refresh() -> void:
 	intent_label.text = "Intent: " + it
 	if b.sniffed_turn == b.turn:
 		intent_label.text += "\nThen: " + b.intent_after_next().text
-	frag_label.text = "EMBER FRAGMENT\nCharge %d / %d  [%s%s]\n+1 per attack. At 4: 3 Ignite + Weak 1 on the Shed" % [
+	frag_label.text = "EMBER FRAGMENT\nCharge %d / %d  [%s%s]\n+1 per attack\nAt 4: 3 Ignite + Weak 1" % [
 		b.charge, Battle.CHARGE_MAX, "#".repeat(b.charge), "-".repeat(Battle.CHARGE_MAX - b.charge)]
 	energy_label.text = "Energy %d / %d" % [b.energy, Battle.ENERGY]
 	piles_label.text = "Draw %d · Discard %d · Faded %d" % [b.draw_pile.size(), b.discard.size(), b.faded.size()]
@@ -164,17 +166,17 @@ func _build_hand() -> void:
 		c.queue_free()
 	cards = []
 	var n: int = b.hand.size()
-	var start_x := 640.0 - n * (CARD_SIZE.x + 12) / 2.0
+	var start_x := 640.0 - n * (CARD_SIZE.x + 10) / 2.0
 	for i in n:
 		var c: Dictionary = Battle.CARDS[b.hand[i]]
 		var color := Color("7a3434") if c.type == "attack" else Color("34507a")
 		if c.cost > b.energy:
 			color = color.darkened(0.55)
-		var p := _panel(Vector2(start_x + i * (CARD_SIZE.x + 12), HAND_Y), CARD_SIZE, color)
+		var p := _panel(Vector2(start_x + i * (CARD_SIZE.x + 10), HAND_Y), CARD_SIZE, color)
 		var l := _label(Vector2(10, 8), 17, p)
 		l.text = "(%d) %s\n\n%s" % [c.cost, c.name, c.desc]
-		l.size = Vector2(CARD_SIZE.x - 20, CARD_SIZE.y - 16)
 		l.autowrap_mode = TextServer.AUTOWRAP_WORD
+		l.size = Vector2(CARD_SIZE.x - 20, CARD_SIZE.y - 16)
 		l.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		cards.append(p)
 

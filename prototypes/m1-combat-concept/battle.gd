@@ -8,19 +8,20 @@ const CARDS := {
 	"heavy": {"name": "Heavy Swing", "cost": 2, "type": "attack", "desc": "Deal 12 damage"},
 	"ember_swing": {"name": "Ember Swing", "cost": 1, "type": "attack", "desc": "Deal 2 damage\nApply 3 Ignite"},
 	"guard": {"name": "Guard", "cost": 1, "type": "skill", "desc": "Gain 5 block"},
-	"brace": {"name": "Brace", "cost": 2, "type": "skill", "desc": "Gain 9 block"},
+	"brace": {"name": "Brace", "cost": 1, "type": "skill", "desc": "Gain 6 block"},
+	"greater": {"name": "Greater Ignite", "cost": 3, "type": "attack", "desc": "Deal 3 damage\nApply 8 Ignite"},
 	"sniff": {"name": "Sniff", "cost": 0, "type": "skill", "desc": "Draw 1\nSee intent 2 turns ahead"},
 	"spark": {"name": "Spark", "cost": 0, "type": "skill", "desc": "Gain 1 energy\nFade"},
 }
-const DECK := ["swing", "swing", "heavy", "ember_swing", "guard", "guard", "guard", "brace", "sniff", "spark"]
-# Shed intents cycle in this order.
+const DECK := ["swing", "swing", "heavy", "ember_swing", "greater", "guard", "guard", "guard", "guard", "brace", "sniff", "spark"]
+# Hellhound intents cycle in this order (the code still calls the enemy "shed").
 const INTENTS := [
-	{"text": "Attack 5, apply Weak 2", "attack": 5, "block": 0, "weak": 2, "ignite": 0},
-	{"text": "Attack 6, gain 6 block", "attack": 6, "block": 6, "weak": 0, "ignite": 0},
-	{"text": "Attack 4, apply 8 Ignite", "attack": 4, "block": 0, "weak": 0, "ignite": 8},
+	{"text": "Attack 1, apply 3 Ignite + Weak 2", "attack": 1, "block": 0, "weak": 2, "ignite": 3},
+	{"text": "Attack 2, apply 3 Ignite, gain 6 block", "attack": 2, "block": 6, "weak": 0, "ignite": 3},
+	{"text": "Apply 12 Ignite", "attack": 0, "block": 0, "weak": 0, "ignite": 12},
 ]
-const ENERGY := 3
-const DRAW := 5
+const ENERGY := 4
+const DRAW := 6
 const BLOCK_CAP := 3
 const CHARGE_MAX := 4
 
@@ -44,7 +45,7 @@ var log_lines: Array = []
 func start(seed_value: int) -> void:
 	rng.seed = seed_value
 	hero = {"hp": 40, "max": 40, "block": 0, "weak": 0, "ignite": 0}
-	shed = {"hp": 45, "max": 45, "block": 0, "weak": 0, "ignite": 0}
+	shed = {"hp": 35, "max": 35, "block": 0, "weak": 0, "ignite": 0}
 	draw_pile = DECK.duplicate()
 	_shuffle(draw_pile)
 	hand = []
@@ -85,7 +86,10 @@ func play(i: int) -> void:
 			_hit_shed(2)
 			shed.ignite += 3
 		"guard": hero.block += 5
-		"brace": hero.block += 9
+		"brace": hero.block += 6
+		"greater":
+			_hit_shed(3)
+			shed.ignite += 8
 		"sniff":
 			_draw(1)
 			sniffed_turn = turn
@@ -102,7 +106,7 @@ func play(i: int) -> void:
 			unleashes += 1
 			shed.ignite += 3
 			shed.weak += 1
-			_log("EMBER FRAGMENT UNLEASHES: 3 Ignite + Weak 1 on the Shed")
+			_log("EMBER FRAGMENT UNLEASHES: 3 Ignite + Weak 1 on the Hellhound")
 	_check_end()
 
 
@@ -130,7 +134,7 @@ func _start_hero_turn() -> void:
 
 func _shed_turn() -> void:
 	shed.block = 0
-	_tick_ignite(shed, "The Shed")
+	_tick_ignite(shed, "The Hellhound")
 	if _check_end():
 		return
 	var it: Dictionary = intent()
@@ -139,15 +143,15 @@ func _shed_turn() -> void:
 		if shed.weak > 0:
 			dmg = int(floor(dmg * 0.75))
 		var taken := _absorb(hero, dmg)
-		_log("Shed attacks for %d (%d through block)" % [dmg, taken])
+		_log("Hellhound attacks for %d (%d through block)" % [dmg, taken])
 	if it.block > 0:
 		shed.block += it.block
 	if it.weak > 0:
 		hero.weak += it.weak
-		_log("Shed applies Weak %d to you" % it.weak)
+		_log("Hellhound applies Weak %d to you" % it.weak)
 	if it.ignite > 0:
 		hero.ignite += it.ignite
-		_log("Shed applies %d Ignite to you" % it.ignite)
+		_log("Hellhound applies %d Ignite to you" % it.ignite)
 	if shed.weak > 0:
 		shed.weak -= 1
 	intent_i = (intent_i + 1) % INTENTS.size()
