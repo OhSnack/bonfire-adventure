@@ -38,6 +38,9 @@ var reward_label: Label
 var reward_buttons: Array = []
 var reward_offer: Array = []
 var hint_line: ColorRect
+var run_no := 0
+var log_sent := 0  # battle log lines already recorded
+var logged_turn := -1
 
 
 func _ready() -> void:
@@ -110,6 +113,8 @@ func _build_reward_box() -> void:
 
 
 func _new_run() -> void:
+	run_no += 1
+	_rec("=== RUN %d START === %s" % [run_no, Time.get_datetime_string_from_system()])
 	fight = 0
 	run_deck = Battle.DECK.duplicate()
 	run_time = 0.0
@@ -120,6 +125,10 @@ func _start_fight(hp: int) -> void:
 	b.start(randi(), REGION[fight], run_deck)
 	b.hero.hp = hp
 	fight_time = 0.0
+	log_sent = 0
+	logged_turn = -1
+	_rec("--- Fight %d of %d: %d Hellhounds (15 HP each), you have %d/%d HP, deck %d: %s" % [
+		fight + 1, REGION.size(), REGION[fight], hp, b.hero.max, run_deck.size(), _deck_summary()])
 	end_box.visible = false
 	reward_box.visible = false
 	_refresh()
@@ -137,6 +146,7 @@ func _input(event: InputEvent) -> void:
 		return
 	# Debug: W wins the current fight, to test the reward and end screens quickly.
 	if event is InputEventKey and event.pressed and event.keycode == KEY_W:
+		_rec("DEBUG: W pressed, fight won instantly (not a real win)")
 		for f in b.foes:
 			f.hp = 0
 		b._check_end()
@@ -181,16 +191,21 @@ func _drop(pos: Vector2) -> void:
 	var attack: bool = Battle.CARDS[b.hand[i]].type == "attack"
 	var over := _foe_at(pos)
 	var unleashes_before: int = b.unleashes
+	var card_name: String = Battle.CARDS[b.hand[i]].name
 	if attack and over >= 0:
 		b.play(i, b.foes[over])
 	elif not attack and pos.y < PLAY_LINE_Y:
 		b.play(i)
+	else:
+		_rec("Drag cancelled: %s (dropped at x %d, y %d)" % [card_name, int(pos.x), int(pos.y)])
 	if b.unleashes > unleashes_before:
 		_flash(frag_panel)
 	_refresh()
 
 
 func _on_end_turn() -> void:
+	var left: Array = b.hand.map(func(id): return Battle.CARDS[id].name)
+	_rec("End turn %d: %d energy unused, unplayed: %s" % [b.turn, b.energy, ", ".join(left) if not left.is_empty() else "none"])
 	b.end_turn()
 	_refresh()
 
@@ -198,9 +213,12 @@ func _on_end_turn() -> void:
 func _on_fight_over() -> void:
 	var summary := "Fight %d %s in %d turns, %d s." % [fight + 1, "won" if b.result == "won" else "lost", b.turn, int(fight_time)]
 	print("RESULT ", summary, " HP ", b.hero.hp)
+	_rec("RESULT %s HP %d/%d, fragment unleashed %d times." % [summary, b.hero.hp, b.hero.max, b.unleashes])
 	if b.result == "lost":
+		_rec("=== RUN %d END: defeated in fight %d, run time %d s ===" % [run_no, fight + 1, int(run_time)])
 		_show_end("Defeated in fight %d of %d.\n%s\nRun time %d s." % [fight + 1, REGION.size(), summary, int(run_time)])
 	elif fight == REGION.size() - 1:
+		_rec("=== RUN %d END: region cleared with %d/%d HP, run time %d s ===" % [run_no, b.hero.hp, b.hero.max, int(run_time)])
 		_show_end("Region cleared with %d / %d HP.\n%s\nRun time %d s · deck %d cards." % [b.hero.hp, b.hero.max, summary, int(run_time), run_deck.size()])
 	else:
 		_show_reward(summary)
@@ -224,9 +242,11 @@ func _show_reward(summary: String) -> void:
 		reward_buttons[k].text = "(%d) %s\n\n%s" % [c.cost, c.name, c.desc]
 	reward_box.visible = true
 	reward_box.move_to_front()
+	_rec("Reward offered: %s" % ", ".join(reward_offer.map(func(id): return Battle.CARDS[id].name)))
 
 
 func _on_pick(k: int) -> void:
+	_rec("Reward: %s" % ("picked " + Battle.CARDS[reward_offer[k]].name if k >= 0 else "skipped"))
 	if k >= 0:
 		run_deck.append(reward_offer[k])
 	var hp: int = mini(b.hero.max, b.hero.hp + HEAL)
@@ -235,6 +255,12 @@ func _on_pick(k: int) -> void:
 
 
 func _refresh() -> void:
+	while log_sent < b.log_lines.size():
+		_rec(b.log_lines[log_sent])
+		log_sent += 1
+	if b.turn != logged_turn and b.result == "":
+		logged_turn = b.turn
+		_rec(_turn_snapshot())
 	hero_label.text = "YOU\nHP %d / %d\nBlock %d%s%s" % [b.hero.hp, b.hero.max, b.hero.block,
 		"\nWeak %d (-25%% damage)" % b.hero.weak if b.hero.weak > 0 else "",
 		"\nIgnite %d" % b.hero.ignite if b.hero.ignite > 0 else ""]
@@ -314,6 +340,35 @@ func _label(pos: Vector2, font_size: int, parent: Node = self) -> Label:
 	l.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	parent.add_child(l)
 	return l
+
+
+# One play-log line, timed from the start of the fight; on the web it goes to the page's log store.
+func _rec(line: String) -> void:
+	var stamped := "[%5.1fs] %s" % [fight_time, line]
+	if OS.has_feature("web"):
+		JavaScriptBridge.eval("window.bonefireLog && window.bonefireLog.add(%s)" % JSON.stringify(stamped))
+	else:
+		print(stamped)
+
+
+func _deck_summary() -> String:
+	var counts := {}
+	for id in run_deck:
+		counts[id] = counts.get(id, 0) + 1
+	var parts: Array = []
+	for id in counts:
+		parts.append("%s x%d" % [Battle.CARDS[id].name, counts[id]])
+	return ", ".join(parts)
+
+
+func _turn_snapshot() -> String:
+	var foes: Array = []
+	for f in b.foes:
+		if f.hp > 0:
+			foes.append("%s %d HP blk %d ign %d weak %d, intent: %s" % [f.name, f.hp, f.block, f.ignite, f.weak, b.intent(f).text])
+	return "Turn %d: you %d HP blk %d ign %d weak %d, energy %d, charge %d/%d | hand: %s | %s" % [
+		b.turn, b.hero.hp, b.hero.block, b.hero.ignite, b.hero.weak, b.energy, b.charge, Battle.CHARGE_MAX,
+		", ".join(b.hand.map(func(id): return Battle.CARDS[id].name)), " ; ".join(foes)]
 
 
 # Wrapping must be on before the size is set, or the label keeps its one-line width.

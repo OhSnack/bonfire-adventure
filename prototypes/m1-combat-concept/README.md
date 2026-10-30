@@ -14,8 +14,10 @@ Riskiest assumption: auto-unleash is readable and creates priming decisions at t
 
 ## How to run
 - **Desktop:** open this folder in Godot 4.7.2 and press Play (F5).
-- **Browser:** the private Claude artifact built from `../../build/m1-web/`
-  (`godot --headless --path . --export-release Web`).
+- **Browser:** the private Claude artifact https://claude.ai/artifact/6Lb5uPxvZKk2fNQktRD6zD, rebuilt with
+  `web/build_web.sh` into `build/m1-web/` (publish `page.html` with `index.js` and `godot-engine-gzip.wasm`).
+- **Play log:** the "Play log" button above the game collects every run played in that browser (turn
+  snapshots, plays, misdrops, unplayed cards, enemy actions, rewards, timings) for copying into the chat.
 - **Debug:** press W to win the current fight instantly (tests the reward and end screens).
 - **Automatic battles:** `godot --headless --path . --script res://sim.gd`.
 
