@@ -9,6 +9,8 @@ detailed record until per-system GDDs exist. Tags carried over: **Decided** = ag
 **Proposed** = awaiting the owner's call, **Open** = not settled. Sections the doc
 does not cover are marked *Open — for `/brainstorm`*; nothing here was invented.
 
+**Placeholder terms (2026-10-30):** spirit = Ner, fragment = Nerling, memory piece = boss memory fragment.
+
 **Setting change (Decided 2026-10-30):** the Jewish and Middle Eastern folklore is
 dropped for an original world of flames and light. Character and enemy names below
 (Nimrod, Ashmedai, the Angel of Death and so on) are placeholders for their roles
@@ -33,7 +35,7 @@ until renamed; their mechanics stay.
 | **Platform** | Cross-platform, landscape everywhere: Android and PC (itch.io) in early access; Steam, Epic and iOS by 1.0 |
 | **Target Audience** | Teens and adults; likely around a 12+ store rating |
 | **Player Count** | Single-player |
-| **Session Length** | Full run about 40–45 min target (3 regions × 6 rooms); save-and-resume mid-run |
+| **Session Length** | Full run 25–35 min before the final boss (3 regions, about 8–12 min each); save-and-resume mid-run |
 | **Monetization** | Free demo plus one-time unlock on mobile; paid with a free demo on PC; optional cosmetics with no gameplay effect |
 | **Estimated Scope** | Large: solo developer at 3–12 h/week, planned by milestone, not by date |
 | **Comparable Titles** | Slay the Spire, Hades, Revita |
@@ -75,7 +77,7 @@ first and Narrative second; the ranking is not yet written down.
 ### Core Mechanics
 1. Turn-based card combat: 4 energy per turn, draw 5, full enemy intent, block carries over up to a cap.
 2. Nerlings: freed from trapped Ners; per-Nerling charge triggers; automatic unleash; five families (Ember, Tide, Mist, Root, Chaos).
-3. Run map: 3 regions × 6 rooms, choosing doors; visible enemies on isometric maps start battles.
+3. Run map: 3 regions × (3 rooms of 2 encounters + boss); after each room choose 1 of 3 doors; a card pick after every battle; events are room objects with a choice panel (see the design doc's Systems › Events); sparks (run currency) convert to Embers at run end.
 4. The haven: residents (Smith, Keeper, Nimrod, Ashmedai) paid with Embers; bonds unlock content and memories.
 5. Key cards (Forgiveness, Dark Bargain) that decide five endings at the final battle with the Angel of Death.
 
@@ -94,7 +96,7 @@ deaths players can explain, memory-driven story, no streaks or nagging.
 Play cards against a fully shown enemy intent, ordering them so Nerlings unleash at the right moment.
 
 ### Short-Term (5-15 minutes)
-Clear a room, free a Ner and pick one of three offers (new Nerling, upgrade or boon), then choose the next door.
+Clear a room's 2 encounters (battle, NPC or event), pick a card after each battle, free a trapped spirit for a fragment, upgrade or boon, then choose 1 of 3 doors.
 
 ### Session-Level (30-120 minutes)
 A run across three regions to the Angel of Death; health persists across the run.
@@ -179,7 +181,7 @@ power, a soul for a soul); Spiritfarer and Hollow Knight scores; Coco.
 ## Risks and Open Questions
 
 ### Design Risks
-- A full run is about 55–65 min on current counts (13 battles plus 6 utility rooms), over the 40–45 min target.
+- Run length only fits if a regular battle takes about 1.5 min and a boss about 3 min; measure in M1.
 - Key cards with Haunt and Linger sit in the opening hand of every normal fight; Forgiveness's Stun can stun-lock the Angel.
 
 ### Technical Risks
@@ -205,6 +207,9 @@ Proposed until the owner decides.
 | The Smith's identity | A smith spirit tied to the Eternal Furnace, source of Embers (owner's direction) |
 | Bond path to Forgiveness | Open (two options: three bonds, or the hunter alone) |
 | Prices per platform; beta test devices | Open |
+| Where the twist's dog clues live now that story events are cut | Open |
+| Whether Embers are kept on death | Open |
+| Sparks-to-Embers conversion rate | Open |
 
 ---
 
