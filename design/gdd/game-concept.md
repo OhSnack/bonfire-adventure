@@ -9,13 +9,18 @@ detailed record until per-system GDDs exist. Tags carried over: **Decided** = ag
 **Proposed** = awaiting the owner's call, **Open** = not settled. Sections the doc
 does not cover are marked *Open — for `/brainstorm`*; nothing here was invented.
 
+**Setting change (Decided 2026-10-30):** the Jewish and Middle Eastern folklore is
+dropped for an original world of flames and light. Character and enemy names below
+(Nimrod, Ashmedai, the Angel of Death and so on) are placeholders for their roles
+until renamed; their mechanics stay.
+
 ---
 
 ## Elevator Pitch
 
 > It's a mobile roguelike deckbuilder where you fight turn-based card battles
-> beside spirit companions in a spirit world drawn from Jewish and Middle Eastern
-> folklore, recovering lost memories to save someone you love, and discovering
+> beside spirit companions in an original spirit world of flames and light,
+> recovering lost memories to save someone you love, and discovering
 > who you really are.
 
 ---
@@ -140,8 +145,8 @@ No pay-to-win, no money-milking.
 | Pokémon | Visible overworld encounters | Side-view card battles |
 | Ori and the Blind Forest | Lighting | Pixel art with modern glow |
 
-**Non-game inspirations**: Jewish and Middle Eastern folklore (gilgul, names as
-power, Ashmedai, the Angel of Death, Elijah); Spiritfarer and Hollow Knight scores; Coco.
+**Non-game inspirations**: universal motifs only (souls as flames, names hold
+power, a soul for a soul); Spiritfarer and Hollow Knight scores; Coco.
 
 ---
 
@@ -194,12 +199,11 @@ Proposed until the owner decides.
 | Do difficulty tiers unlock memories? | No: cosmetics and extra Embers only |
 | Which two mantles at 1.0? | Sword and shield (beta), Bow (1.0) |
 | Hammer, Spear, Gauntlets signatures | Stagger, Momentum, Conduit |
-| Three regions and bosses | Behemoth, Lilith, Azazel |
+| Three regions and bosses | A great beast of the wilds, a mother of night, a forge-lord rival to the Smith |
 | How is the opening night staged? | 4 dog's-eye panels, replayed in the final act |
-| Nimrod's endgame role | Esau as a rival hunter; Nimrod finishes the coat and doesn't wear it |
-| Dumah's role | Back burner |
-| The Smith's identity | Golem with an original ba'al shem maker |
-| Bond path to Forgiveness | Open (two options: three bonds, or Nimrod alone) |
+| The hunter's endgame role | A rival hunter; the hunter finishes the coat and doesn't wear it |
+| The Smith's identity | A smith spirit tied to the Eternal Furnace, source of Embers (owner's direction) |
+| Bond path to Forgiveness | Open (two options: three bonds, or the hunter alone) |
 | Prices per platform; beta test devices | Open |
 
 ---
