@@ -1,5 +1,5 @@
 # PROTOTYPE - NOT FOR PRODUCTION
-# Question: does ordering stick-deck cards to prime the Ember fragment against a Shed with visible intent create real decisions, in ~90 s per battle?
+# Question: does ordering cards to prime the Ember fragment against two Hellhounds with visible intent create real decisions, in ~90 s per battle?
 # Date: 2026-10-30
 extends RefCounted
 
@@ -14,12 +14,14 @@ const CARDS := {
 	"spark": {"name": "Spark", "cost": 0, "type": "skill", "desc": "Gain 1 energy\nFade"},
 }
 const DECK := ["swing", "swing", "heavy", "ember_swing", "greater", "guard", "guard", "guard", "guard", "brace", "sniff", "spark"]
-# Hellhound intents cycle in this order (the code still calls the enemy "shed").
+# Hellhound intents cycle in this order; hound k starts k steps in.
 const INTENTS := [
 	{"text": "Attack 1, apply 3 Ignite + Weak 2", "attack": 1, "block": 0, "weak": 2, "ignite": 3},
 	{"text": "Attack 2, apply 3 Ignite, gain 6 block", "attack": 2, "block": 6, "weak": 0, "ignite": 3},
 	{"text": "Apply 8 Ignite", "attack": 0, "block": 0, "weak": 0, "ignite": 8},
 ]
+const HOUNDS := 2
+const HOUND_HP := 20
 const ENERGY := 4
 const DRAW := 6
 const BLOCK_CAP := 3
@@ -27,14 +29,13 @@ const CHARGE_MAX := 3
 
 var rng := RandomNumberGenerator.new()
 var hero := {}
-var shed := {}
+var foes: Array = []  # {name, hp, max, block, weak, ignite, i}
 var energy := 0
 var draw_pile: Array = []
 var hand: Array = []
 var discard: Array = []
 var faded: Array = []
 var charge := 0
-var intent_i := 0
 var turn := 0
 var sniffed_turn := -1
 var unleashes := 0
@@ -45,14 +46,16 @@ var log_lines: Array = []
 func start(seed_value: int) -> void:
 	rng.seed = seed_value
 	hero = {"hp": 40, "max": 40, "block": 0, "weak": 0, "ignite": 0}
-	shed = {"hp": 30, "max": 30, "block": 0, "weak": 0, "ignite": 0}
+	foes = []
+	for k in HOUNDS:
+		foes.append({"name": "Hellhound %d" % (k + 1), "hp": HOUND_HP, "max": HOUND_HP,
+			"block": 0, "weak": 0, "ignite": 0, "i": k % INTENTS.size()})
 	draw_pile = DECK.duplicate()
 	_shuffle(draw_pile)
 	hand = []
 	discard = []
 	faded = []
 	charge = 0
-	intent_i = 0
 	turn = 0
 	unleashes = 0
 	result = ""
@@ -60,41 +63,48 @@ func start(seed_value: int) -> void:
 	_start_hero_turn()
 
 
-func intent() -> Dictionary:
-	return INTENTS[intent_i]
+func alive() -> Array:
+	return foes.filter(func(f): return f.hp > 0)
 
 
-func intent_after_next() -> Dictionary:
-	return INTENTS[(intent_i + 1) % INTENTS.size()]
+func intent(f: Dictionary) -> Dictionary:
+	return INTENTS[f.i]
+
+
+func intent_after_next(f: Dictionary) -> Dictionary:
+	return INTENTS[(f.i + 1) % INTENTS.size()]
 
 
 func can_play(i: int) -> bool:
 	return result == "" and i >= 0 and i < hand.size() and CARDS[hand[i]].cost <= energy
 
 
-func play(i: int) -> void:
+# target: the enemy an attack was dropped on (ignored for skills).
+func play(i: int, target: Dictionary = {}) -> void:
 	if not can_play(i):
 		return
 	var id: String = hand[i]
 	var c: Dictionary = CARDS[id]
+	if c.type == "attack" and (target.is_empty() or target.hp <= 0):
+		return
 	energy -= c.cost
 	hand.remove_at(i)
 	match id:
-		"swing": _hit_shed(5)
-		"heavy": _hit_shed(12)
+		"swing": _hit(target, 5)
+		"heavy": _hit(target, 12)
 		"ember_swing":
-			_hit_shed(2)
-			shed.ignite += 3
+			_hit(target, 2)
+			target.ignite += 3
 		"guard": hero.block += 5
 		"brace": hero.block += 6
 		"greater":
-			_hit_shed(3)
-			shed.ignite += 8
+			_hit(target, 3)
+			target.ignite += 8
 		"sniff":
 			_draw(1)
 			sniffed_turn = turn
 		"spark": energy += 1
-	_log("You play %s" % c.name)
+	_log("You play %s" % c.name + (" on %s" % target.name if c.type == "attack" else ""))
 	if id == "spark":
 		faded.append(id)
 	else:
@@ -104,9 +114,9 @@ func play(i: int) -> void:
 		if charge >= CHARGE_MAX:
 			charge = 0
 			unleashes += 1
-			# Hits every enemy; the prototype has one.
-			shed.ignite += 3
-			shed.weak += 1
+			for f in alive():
+				f.ignite += 3
+				f.weak += 1
 			_log("EMBER FRAGMENT UNLEASHES: 3 Ignite + Weak 1 on all enemies")
 	_check_end()
 
@@ -118,7 +128,9 @@ func end_turn() -> void:
 	hand = []
 	if hero.weak > 0:
 		hero.weak -= 1
-	_shed_turn()
+	for f in foes:
+		if f.hp > 0 and result == "":
+			_foe_turn(f)
 	if result == "":
 		_start_hero_turn()
 
@@ -133,37 +145,41 @@ func _start_hero_turn() -> void:
 	_draw(DRAW)
 
 
-func _shed_turn() -> void:
-	shed.block = 0
-	_tick_ignite(shed, "The Hellhound")
-	if _check_end():
+func _foe_turn(f: Dictionary) -> void:
+	f.block = 0
+	_tick_ignite(f, f.name)
+	if f.hp <= 0:
+		_log("%s is defeated" % f.name)
+		_check_end()
 		return
-	var it: Dictionary = intent()
+	var it: Dictionary = intent(f)
 	if it.attack > 0:
 		var dmg: int = it.attack
-		if shed.weak > 0:
+		if f.weak > 0:
 			dmg = int(floor(dmg * 0.75))
 		var taken := _absorb(hero, dmg)
-		_log("Hellhound attacks for %d (%d through block)" % [dmg, taken])
+		_log("%s attacks for %d (%d through block)" % [f.name, dmg, taken])
 	if it.block > 0:
-		shed.block += it.block
+		f.block += it.block
 	if it.weak > 0:
 		hero.weak += it.weak
-		_log("Hellhound applies Weak %d to you" % it.weak)
+		_log("%s applies Weak %d to you" % [f.name, it.weak])
 	if it.ignite > 0:
 		hero.ignite += it.ignite
-		_log("Hellhound applies %d Ignite to you" % it.ignite)
-	if shed.weak > 0:
-		shed.weak -= 1
-	intent_i = (intent_i + 1) % INTENTS.size()
+		_log("%s applies %d Ignite to you" % [f.name, it.ignite])
+	if f.weak > 0:
+		f.weak -= 1
+	f.i = (f.i + 1) % INTENTS.size()
 	_check_end()
 
 
-func _hit_shed(base: int) -> void:
+func _hit(f: Dictionary, base: int) -> void:
 	var dmg := base
 	if hero.weak > 0:
 		dmg = int(floor(base * 0.75))
-	_absorb(shed, dmg)
+	_absorb(f, dmg)
+	if f.hp <= 0:
+		_log("%s is defeated" % f.name)
 
 
 # Returns the damage that got through block.
@@ -194,7 +210,7 @@ func _draw(n: int) -> void:
 
 
 func _check_end() -> bool:
-	if shed.hp <= 0:
+	if alive().is_empty():
 		result = "won"
 	elif hero.hp <= 0:
 		result = "lost"
