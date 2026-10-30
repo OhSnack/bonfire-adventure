@@ -23,7 +23,7 @@ Riskiest assumption: auto-unleash is readable and creates priming decisions at t
 - Deck (12): Swing ×2 (5 dmg), Heavy Swing (12), Ember Swing (2 + 3 Ignite), Greater Ignite (3 energy: 3 + 8 Ignite),
   Guard ×4, Brace (1 energy: 6 block), Sniff, Spark.
   Attack damage is 1 lower than the Content tab (owner change, 2026-10-30).
-- Enemies: two Hellhounds (skeletal dogs with fiery plumes; were the Shed), 20 HP each; the second starts
+- Enemies: two Hellhounds (skeletal dogs with fiery plumes; were the Shed), 15 HP each; the second starts
   one step later in the cycle. Intents cycle:
   attack 1 + 3 Ignite + Weak 2 → attack 2 + 3 Ignite + gain 6 block → apply 8 Ignite.
 - Ember fragment: +1 charge per attack card; at 3 it fires mid-turn: 3 Ignite + Weak 1 on every enemy.
@@ -32,6 +32,11 @@ Riskiest assumption: auto-unleash is readable and creates priming decisions at t
 - Placeholders: the enemy's block resets each turn; Weak N lasts N of the target's turns
   (−25%, rounded down); Ignite ticks at the start of its target's turn, then halves;
   the discard pile reshuffles when the draw pile is empty.
+
+## Region test (sim.gd, not in the playable build)
+Fights of 2, 2, then 3 Hellhounds (3 is the most per fight), +4 HP between fights. Placeholder
+rewards after each fight: pick 1 of 3 starting cards, and one spirit (Tide fragment, Ember unleash
++2 Ignite, or the Kindle boon: attacks also apply 3 Ignite).
 
 ## Findings
 _Filled in at the debrief._

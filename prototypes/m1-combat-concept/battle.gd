@@ -21,7 +21,7 @@ const INTENTS := [
 	{"text": "Apply 8 Ignite", "attack": 0, "block": 0, "weak": 0, "ignite": 8},
 ]
 const HOUNDS := 2
-const HOUND_HP := 20
+const HOUND_HP := 15
 const ENERGY := 4
 const DRAW := 6
 const BLOCK_CAP := 3
@@ -41,16 +41,22 @@ var sniffed_turn := -1
 var unleashes := 0
 var result := ""  # "", "won", "lost"
 var log_lines: Array = []
+# Run perks from rewards (sim only for now): ember_plus = extra Ignite on unleash,
+# tide = Tide fragment (charges on gaining block, heals 4 at 3), kindle = Ignite per attack.
+var perks := {}
+var tide_charge := 0
 
 
-func start(seed_value: int) -> void:
+func start(seed_value: int, hounds: int = HOUNDS, deck: Array = DECK, run_perks: Dictionary = {}) -> void:
 	rng.seed = seed_value
+	perks = run_perks
+	tide_charge = 0
 	hero = {"hp": 40, "max": 40, "block": 0, "weak": 0, "ignite": 0}
 	foes = []
-	for k in HOUNDS:
+	for k in hounds:
 		foes.append({"name": "Hellhound %d" % (k + 1), "hp": HOUND_HP, "max": HOUND_HP,
 			"block": 0, "weak": 0, "ignite": 0, "i": k % INTENTS.size()})
-	draw_pile = DECK.duplicate()
+	draw_pile = deck.duplicate()
 	_shuffle(draw_pile)
 	hand = []
 	discard = []
@@ -95,8 +101,8 @@ func play(i: int, target: Dictionary = {}) -> void:
 		"ember_swing":
 			_hit(target, 2)
 			target.ignite += 3
-		"guard": hero.block += 5
-		"brace": hero.block += 6
+		"guard": _gain_block(5)
+		"brace": _gain_block(6)
 		"greater":
 			_hit(target, 3)
 			target.ignite += 8
@@ -109,13 +115,15 @@ func play(i: int, target: Dictionary = {}) -> void:
 		faded.append(id)
 	else:
 		discard.append(id)
+	if c.type == "attack" and perks.get("kindle", 0) > 0 and target.hp > 0:
+		target.ignite += perks.kindle
 	if c.type == "attack":
 		charge += 1
 		if charge >= CHARGE_MAX:
 			charge = 0
 			unleashes += 1
 			for f in alive():
-				f.ignite += 3
+				f.ignite += 3 + perks.get("ember_plus", 0)
 				f.weak += 1
 			_log("EMBER FRAGMENT UNLEASHES: 3 Ignite + Weak 1 on all enemies")
 	_check_end()
@@ -133,6 +141,16 @@ func end_turn() -> void:
 			_foe_turn(f)
 	if result == "":
 		_start_hero_turn()
+
+
+func _gain_block(n: int) -> void:
+	hero.block += n
+	if perks.get("tide", false):
+		tide_charge += 1
+		if tide_charge >= 3:
+			tide_charge = 0
+			hero.hp = mini(hero.max, hero.hp + 4)
+			_log("TIDE FRAGMENT UNLEASHES: heal 4")
 
 
 func _start_hero_turn() -> void:
