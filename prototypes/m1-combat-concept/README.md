@@ -16,6 +16,7 @@ Riskiest assumption: auto-unleash is readable and creates priming decisions at t
 - **Desktop:** open this folder in Godot 4.7.2 and press Play (F5).
 - **Browser:** the private Claude artifact built from `../../build/m1-web/`
   (`godot --headless --path . --export-release Web`).
+- **Debug:** press W to win the current fight instantly (tests the reward and end screens).
 - **Automatic battles:** `godot --headless --path . --script res://sim.gd`.
 
 ## Rules (numbers from the design doc's Content tab, with the owner's 2026-10-30 changes)
@@ -33,7 +34,12 @@ Riskiest assumption: auto-unleash is readable and creates priming decisions at t
   (−25%, rounded down); Ignite ticks at the start of its target's turn, then halves;
   the discard pile reshuffles when the draw pile is empty.
 
-## Region test (sim.gd, not in the playable build)
+## The run (playable)
+Three fights: 2, 2, then 3 Hellhounds. HP carries over with a 4 HP heal after each fight.
+After fights 1 and 2, pick 1 of 3 cards (from Greater Ignite, Heavy Swing, Ember Swing, Swing,
+Brace, Guard) or skip.
+
+## Region test (sim.gd)
 Fights of 2, 2, then 3 Hellhounds (3 is the most per fight), +4 HP between fights. Placeholder
 rewards after each fight: pick 1 of 3 starting cards, and one spirit (Tide fragment, Ember unleash
 +2 Ignite, or the Kindle boon: attacks also apply 3 Ignite).

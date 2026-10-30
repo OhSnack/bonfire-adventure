@@ -1,5 +1,5 @@
 # PROTOTYPE - NOT FOR PRODUCTION
-# Question: does ordering cards to prime the Ember fragment against two Hellhounds with visible intent create real decisions, in ~90 s per battle?
+# Question: does a 3-fight run against Hellhound packs, with a card pick between fights, create real decisions in ~90 s per fight?
 # Date: 2026-10-30
 extends Control
 
@@ -7,16 +7,22 @@ const Battle := preload("res://battle.gd")
 const CARD_SIZE := Vector2(140, 200)
 const HAND_Y := 500.0
 const PLAY_LINE_Y := 450.0
+const REGION := [2, 2, 3]  # hounds per fight; 3 is the most a fight can have
+const HEAL := 4  # 10% of max HP after each fight
+const REWARD_POOL := ["greater", "heavy", "ember_swing", "swing", "brace", "guard"]
+const MAX_FOES := 3
 
 var b = Battle.new()
-var elapsed := 0.0
+var fight := 0
+var run_deck: Array = []
+var run_time := 0.0
+var fight_time := 0.0
 var cards: Array = []  # Panel per hand card
 var drag_i := -1
 var drag_offset := Vector2.ZERO
 var foe_panels: Array = []
 var foe_labels: Array = []
 var intent_labels: Array = []
-var hero_panel: Panel
 var hero_label: Label
 var frag_panel: Panel
 var frag_label: Label
@@ -27,6 +33,10 @@ var piles_label: Label
 var end_btn: Button
 var end_box: Panel
 var end_label: Label
+var reward_box: Panel
+var reward_label: Label
+var reward_buttons: Array = []
+var reward_offer: Array = []
 var hint_line: ColorRect
 
 
@@ -36,23 +46,19 @@ func _ready() -> void:
 	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(bg)
 	status_label = _label(Vector2(20, 12), 22)
-	hero_panel = _panel(Vector2(40, 110), Vector2(270, 200), Color("2e4a3a"))
-	hero_label = _label(Vector2(14, 10), 20, hero_panel)
-	for k in Battle.HOUNDS:
-		var x := 690.0 + k * 290.0
-		var p := _panel(Vector2(x, 110), Vector2(270, 200), Color("5a2e2e"))
+	var hero_panel := _panel(Vector2(30, 110), Vector2(230, 200), Color("2e4a3a"))
+	hero_label = _wrapped(_label(Vector2(12, 10), 19, hero_panel), Vector2(206, 184))
+	frag_panel = _panel(Vector2(275, 120), Vector2(265, 150), Color("4a3a1e"))
+	frag_label = _wrapped(_label(Vector2(12, 10), 18, frag_panel), Vector2(241, 130))
+	for k in MAX_FOES:
+		var x := 560.0 + k * 235.0
+		var p := _panel(Vector2(x, 110), Vector2(220, 200), Color("5a2e2e"))
 		foe_panels.append(p)
-		foe_labels.append(_label(Vector2(14, 10), 20, p))
-		var il := _label(Vector2(x, 22), 17)
-		il.autowrap_mode = TextServer.AUTOWRAP_WORD
-		il.size = Vector2(270, 84)
+		foe_labels.append(_wrapped(_label(Vector2(12, 10), 18, p), Vector2(196, 184)))
+		var il := _wrapped(_label(Vector2(x, 34), 15), Vector2(220, 74))
 		il.add_theme_color_override("font_color", Color("ffd27a"))
 		intent_labels.append(il)
-	frag_panel = _panel(Vector2(340, 120), Vector2(310, 150), Color("4a3a1e"))
-	frag_label = _label(Vector2(14, 10), 20, frag_panel)
-	frag_label.autowrap_mode = TextServer.AUTOWRAP_WORD
-	frag_label.size = Vector2(282, 130)
-	log_label = _label(Vector2(340, 322), 15)
+	log_label = _label(Vector2(275, 322), 15)
 	log_label.add_theme_color_override("font_color", Color("c9c2d6"))
 	hint_line = ColorRect.new()
 	hint_line.color = Color(1, 1, 1, 0.12)
@@ -71,32 +77,70 @@ func _ready() -> void:
 	end_btn.add_theme_font_size_override("font_size", 22)
 	end_btn.pressed.connect(_on_end_turn)
 	add_child(end_btn)
-	end_box = _panel(Vector2(440, 250), Vector2(400, 180), Color("101018"))
-	end_label = _label(Vector2(20, 20), 24, end_box)
+	_build_reward_box()
+	end_box = _panel(Vector2(400, 220), Vector2(480, 220), Color("101018"))
+	end_label = _wrapped(_label(Vector2(20, 20), 22, end_box), Vector2(440, 120))
 	var again := Button.new()
-	again.text = "Play again"
-	again.position = Vector2(120, 110)
+	again.text = "New run"
+	again.position = Vector2(160, 150)
 	again.size = Vector2(160, 50)
-	again.pressed.connect(_new_battle)
+	again.pressed.connect(_new_run)
 	end_box.add_child(again)
-	_new_battle()
+	_new_run()
 
 
-func _new_battle() -> void:
-	b.start(randi())
-	elapsed = 0.0
+func _build_reward_box() -> void:
+	reward_box = _panel(Vector2(250, 90), Vector2(780, 400), Color("101018"))
+	reward_label = _wrapped(_label(Vector2(24, 18), 22, reward_box), Vector2(732, 70))
+	for k in 3:
+		var btn := Button.new()
+		btn.position = Vector2(24 + k * 250, 110)
+		btn.size = Vector2(230, 200)
+		btn.add_theme_font_size_override("font_size", 18)
+		btn.autowrap_mode = TextServer.AUTOWRAP_WORD
+		btn.pressed.connect(_on_pick.bind(k))
+		reward_box.add_child(btn)
+		reward_buttons.append(btn)
+	var skip := Button.new()
+	skip.text = "Skip"
+	skip.position = Vector2(315, 330)
+	skip.size = Vector2(150, 50)
+	skip.pressed.connect(_on_pick.bind(-1))
+	reward_box.add_child(skip)
+
+
+func _new_run() -> void:
+	fight = 0
+	run_deck = Battle.DECK.duplicate()
+	run_time = 0.0
+	_start_fight(40)
+
+
+func _start_fight(hp: int) -> void:
+	b.start(randi(), REGION[fight], run_deck)
+	b.hero.hp = hp
+	fight_time = 0.0
 	end_box.visible = false
+	reward_box.visible = false
 	_refresh()
 
 
 func _process(delta: float) -> void:
 	if b.result == "":
-		elapsed += delta
-	status_label.text = "Turn %d    %d:%02d" % [b.turn, int(elapsed) / 60, int(elapsed) % 60]
+		fight_time += delta
+		run_time += delta
+	status_label.text = "Fight %d of %d · Turn %d    %d:%02d" % [fight + 1, REGION.size(), b.turn, int(fight_time) / 60, int(fight_time) % 60]
 
 
 func _input(event: InputEvent) -> void:
 	if b.result != "":
+		return
+	# Debug: W wins the current fight, to test the reward and end screens quickly.
+	if event is InputEventKey and event.pressed and event.keycode == KEY_W:
+		for f in b.foes:
+			f.hp = 0
+		b._check_end()
+		_refresh()
 		return
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
 		if event.pressed:
@@ -112,7 +156,7 @@ func _input(event: InputEvent) -> void:
 		cards[drag_i].position = event.position - drag_offset
 		var attack: bool = Battle.CARDS[b.hand[drag_i]].type == "attack"
 		var over := _foe_at(event.position)
-		for k in foe_panels.size():
+		for k in b.foes.size():
 			foe_panels[k].modulate = Color(1.4, 1.3, 0.8) if attack and k == over else _foe_tint(k)
 		var on_line: bool = not attack and event.position.y < PLAY_LINE_Y
 		hint_line.color = Color(1, 1, 0.5, 0.6) if on_line else Color(1, 1, 1, 0.12)
@@ -120,7 +164,7 @@ func _input(event: InputEvent) -> void:
 
 # Index of the living enemy under pos, or -1.
 func _foe_at(pos: Vector2) -> int:
-	for k in foe_panels.size():
+	for k in b.foes.size():
 		if b.foes[k].hp > 0 and foe_panels[k].get_global_rect().has_point(pos):
 			return k
 	return -1
@@ -151,11 +195,55 @@ func _on_end_turn() -> void:
 	_refresh()
 
 
+func _on_fight_over() -> void:
+	var summary := "Fight %d %s in %d turns, %d s." % [fight + 1, "won" if b.result == "won" else "lost", b.turn, int(fight_time)]
+	print("RESULT ", summary, " HP ", b.hero.hp)
+	if b.result == "lost":
+		_show_end("Defeated in fight %d of %d.\n%s\nRun time %d s." % [fight + 1, REGION.size(), summary, int(run_time)])
+	elif fight == REGION.size() - 1:
+		_show_end("Region cleared with %d / %d HP.\n%s\nRun time %d s · deck %d cards." % [b.hero.hp, b.hero.max, summary, int(run_time), run_deck.size()])
+	else:
+		_show_reward(summary)
+
+
+func _show_end(text: String) -> void:
+	end_label.text = text
+	end_box.visible = true
+	end_box.move_to_front()
+
+
+func _show_reward(summary: String) -> void:
+	var healed: int = mini(b.hero.max, b.hero.hp + HEAL)
+	reward_label.text = "%s You heal %d (HP %d / %d).\nPick a card to add to your deck (%d cards), or skip." % [
+		summary, healed - b.hero.hp, healed, b.hero.max, run_deck.size()]
+	var pool: Array = REWARD_POOL.duplicate()
+	pool.shuffle()
+	reward_offer = pool.slice(0, 3)
+	for k in 3:
+		var c: Dictionary = Battle.CARDS[reward_offer[k]]
+		reward_buttons[k].text = "(%d) %s\n\n%s" % [c.cost, c.name, c.desc]
+	reward_box.visible = true
+	reward_box.move_to_front()
+
+
+func _on_pick(k: int) -> void:
+	if k >= 0:
+		run_deck.append(reward_offer[k])
+	var hp: int = mini(b.hero.max, b.hero.hp + HEAL)
+	fight += 1
+	_start_fight(hp)
+
+
 func _refresh() -> void:
 	hero_label.text = "YOU\nHP %d / %d\nBlock %d%s%s" % [b.hero.hp, b.hero.max, b.hero.block,
 		"\nWeak %d (-25%% damage)" % b.hero.weak if b.hero.weak > 0 else "",
 		"\nIgnite %d" % b.hero.ignite if b.hero.ignite > 0 else ""]
-	for k in b.foes.size():
+	for k in MAX_FOES:
+		var shown: bool = k < b.foes.size()
+		foe_panels[k].visible = shown
+		intent_labels[k].visible = shown
+		if not shown:
+			continue
 		var f: Dictionary = b.foes[k]
 		foe_panels[k].modulate = _foe_tint(k)
 		if f.hp <= 0:
@@ -175,17 +263,13 @@ func _refresh() -> void:
 	frag_label.text = "EMBER FRAGMENT\nCharge %d / %d  [%s%s]\nAt 3 attacks, all enemies\nget 3 Ignite + Weak 1" % [
 		b.charge, Battle.CHARGE_MAX, "#".repeat(b.charge), "-".repeat(Battle.CHARGE_MAX - b.charge)]
 	energy_label.text = "Energy %d / %d" % [b.energy, Battle.ENERGY]
-	piles_label.text = "Draw %d · Discard %d · Faded %d" % [b.draw_pile.size(), b.discard.size(), b.faded.size()]
+	piles_label.text = "Deck %d · Draw %d · Discard %d · Faded %d" % [run_deck.size(), b.draw_pile.size(), b.discard.size(), b.faded.size()]
 	var lines: Array = b.log_lines.slice(maxi(0, b.log_lines.size() - 5))
 	log_label.text = "\n".join(lines)
 	_build_hand()
 	end_btn.disabled = b.result != ""
-	if b.result != "":
-		end_box.visible = true
-		end_box.move_to_front()
-		var line := "%s in %d turns, %d s\nFragment unleashed %d×" % ["Won" if b.result == "won" else "Lost", b.turn, int(elapsed), b.unleashes]
-		end_label.text = line
-		print("RESULT ", line.replace("\n", " · "))
+	if b.result != "" and not end_box.visible and not reward_box.visible:
+		_on_fight_over()
 
 
 func _build_hand() -> void:
@@ -200,11 +284,8 @@ func _build_hand() -> void:
 		if c.cost > b.energy:
 			color = color.darkened(0.55)
 		var p := _panel(Vector2(start_x + i * (CARD_SIZE.x + 10), HAND_Y), CARD_SIZE, color)
-		var l := _label(Vector2(10, 8), 17, p)
+		var l := _wrapped(_label(Vector2(10, 8), 17, p), Vector2(CARD_SIZE.x - 20, CARD_SIZE.y - 16))
 		l.text = "(%d) %s\n\n%s" % [c.cost, c.name, c.desc]
-		l.autowrap_mode = TextServer.AUTOWRAP_WORD
-		l.size = Vector2(CARD_SIZE.x - 20, CARD_SIZE.y - 16)
-		l.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		cards.append(p)
 
 
@@ -232,4 +313,11 @@ func _label(pos: Vector2, font_size: int, parent: Node = self) -> Label:
 	l.add_theme_font_size_override("font_size", font_size)
 	l.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	parent.add_child(l)
+	return l
+
+
+# Wrapping must be on before the size is set, or the label keeps its one-line width.
+func _wrapped(l: Label, size: Vector2) -> Label:
+	l.autowrap_mode = TextServer.AUTOWRAP_WORD
+	l.size = size
 	return l
