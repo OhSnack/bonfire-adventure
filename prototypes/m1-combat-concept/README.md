@@ -3,7 +3,7 @@
 <!-- Date: 2026-10-30 -->
 # M1 combat concept prototype
 
-**Status:** in progress
+**Status:** concluded 2026-10-31: PROCEED (with creative-director concerns). See REPORT.md.
 
 ## Hypothesis
 If the player orders the stick deck's cards to prime and fire the Ember fragment against
