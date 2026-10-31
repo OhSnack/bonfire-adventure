@@ -61,6 +61,11 @@ enter your deck as playable cards.
 The twist (Decided): the hero is not the child but the child's dog, reshaped in the
 crossing into the child's likeness.
 
+Scent (Decided 2026-10-31): the hero senses enemy intents and what lies behind the
+next door through scent, the in-world reason intents and door previews exist. It is
+a dog trait, so it is shown only as spirit wisps and never as sniffing or nose
+imagery; see `design/art/art-bible.md`, Section 1, Dog-clue constraint.
+
 ---
 
 ## Player Experience Analysis (MDA Framework)
