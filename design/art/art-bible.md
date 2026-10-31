@@ -3,7 +3,7 @@
 > **Status**: Draft
 > **Owned By**: art-director
 > **Last Updated**: 2026-10-31
-> **Art Director Sign-Off (AD-ART-BIBLE)**: [Not yet reviewed]
+> **Art Director Sign-Off (AD-ART-BIBLE)**: REVISED 2026-10-31 — sections 1–4; the gate's six CONCERNS were fixed. Sections 5–9 not yet authored (block final asset production, not this sign-off).
 
 `/art-bible` writes these nine sections in this order and replaces each
 section's `[To be designed]` line as that section is approved. A section still
@@ -79,7 +79,7 @@ alive later.
 |---|---|---|---|---|---|
 | Room exploration and door choice | Quiet curiosity, a little lonely | The region's hue family, soft and low contrast, top-down ambient light. Doors are the brightest shapes. | hushed, drifting, dusty, expectant | Low | Spirit wisps leaking through door gaps |
 | Card combat | Focused and in control | The region's hues pushed into a dimmed backdrop, with high contrast in front and a side key light on the fighters | clear, tense, grounded, staged | Medium | A darkened backdrop so the fighters and icons stand forward |
-| Elite or boss fight | Awe and pressure | The region's colour pushed hard, with strong rim light behind the enemy. In later regions the darker world makes the hero's warmth stand out more. | towering, heavy, charged, dramatic | High | The enemy's back-light; vignette at the screen edges |
+| Elite or boss fight | Awe and pressure | The region's colour pushed hard, with a strong back-light behind the enemy in the region's hues, never the hero's warm amber. In later regions the darker world makes the hero's warmth stand out more. | towering, heavy, charged, dramatic | High | The enemy's back-light; vignette at the screen edges |
 | Events and NPCs | Strange, intimate, uncertain | Single-source pools of light (a lantern, a candle) with violet ambient | uncanny, close, secretive, tender | Low–medium | One local light the scene is gathered around |
 | Haven (home bonfire) | Safety and belonging | The warmest place in the game. Bonfire light from below, soft falloff. | cosy, gathered, flickering, safe | Low | The bonfire, plus residents lit by it |
 | Memory moment | Bittersweet recognition | A gold glow blooms from the centre and the world briefly fades back | luminous, still, aching, gentle | Low, then a soft swell | A colour "breath" that adds the new stage |
@@ -95,7 +95,7 @@ alive later.
 
 **Silhouette philosophy.** Rounded shapes mean friend, angular shapes mean
 threat. Each archetype has one trait that still reads at phone thumbnail size
-(about 48 px tall).
+(about 48 dp tall on screen).
 
 | Archetype | Base shape | Distinguishing trait |
 |---|---|---|
@@ -138,13 +138,15 @@ Nerling family?", with two separate shapes.
   medallion (Section 1). The door arch may glow faintly in the family colour,
   but only as an extra cue.
 - **Exact placement and size** are set in Section 7 or the door UX spec after a
-  phone-size mockup. A medallion at 60% of a 48 dp badge gives a glyph of about
-  24 px, below the 29 px target, so size must be tested.
+  phone-size mockup. Family glyphs target 28 dp on screen (60% of a 48 dp badge,
+  the size they were designed at). A medallion at 60% of the badge leaves a glyph
+  of about 24 dp, below that target, so size is to be tested in a mockup.
 - **On Hades:** we take its clarity (a door that previews its reward), not its
   icon designs. Every badge and glyph is original.
 
 **Hero versus supporting shapes.** The hero is the only small, round,
-high-value silhouette with a rim light. Supporting characters sit at lower
+high-value silhouette with a warm rim light; enemies get a back-light in their
+region's hues, and the world gets edge light (Section 4). Supporting characters sit at lower
 contrast. Nerlings are the exception: they are the brightest shapes on the
 player's side (Section 1, principle 2).
 
@@ -157,7 +159,7 @@ target phones.
 
 | Name | Hex | Meaning |
 |---|---|---|
-| Ash Bone | #CFC8BE | The hero's starting bones; loss and absence |
+| Ash Bone | #C4C9D1 | The hero's starting bones (cool grey-blue, so warmth has room to return); loss and absence; neutral UI text and door badges |
 | Dusk Slate | #2E3446 | Shadow and the world's base; the spirit world at rest |
 | Spirit Teal | #6FD6D0 | Soul-light, scent wisps, perception |
 | Hearth Amber | #F2B35E | Life returning, home, the haven |
@@ -187,7 +189,7 @@ from it, so a status never blends into a background, a region or a colour stage.
 | Root family | #6BBF59 | Branching root, three roots pointing down |
 | Chaos family | Core #4A1E6B, ring #D94FD1 | Filled orb with a tilted orbit ring |
 
-Family glyphs are to be confirmed in a 24 px greyscale mockup, side by side.
+Family glyphs are to be confirmed in a greyscale mockup, side by side, at 24 dp and at the 28 dp target (Section 3, door symbols).
 
 **Keeping Ignite apart from the warm "life" colours.** Ignite is hot, fully
 saturated red-orange with hard, jagged edges and a flicker. Life warmth (Hearth
@@ -226,7 +228,7 @@ template:
 or companion colour, the region's version is darker and less saturated, and the
 semantic colour keeps its dark outline and glyph. In a warm region, the ground
 leans yellow-ochre, the shadows lean cool, and life warmth is shown as light
-(glows, rim light) rather than paint. That leaves saturated red-orange for
+(glows, edge light) rather than paint. That leaves saturated red-orange for
 Ignite alone. In a cool region, the backdrop blues stay darker and greyer than
 Tide and block.
 
@@ -235,10 +237,10 @@ hues. They never change which hues a region uses.
 
 | Stage | Trigger | World saturation | Changes |
 |---|---|---|---|
-| 0 Ashen | Start | about 35% | The region's hues washed out; the hero is grey-blue bone with ash hair |
+| 0 Ashen | Start | about 35% | The region's hues washed out; the hero's bones are Ash Bone grey-blue, with ash hair |
 | 1 Kindled | First memories | about 55% | Amber enters lamps and the haven; bones begin to warm |
 | 2 Warming | Mid story | about 75% | The region's hue family shows fully; the hair warms |
-| 3 Alive | Late story | 100% | Warm rim light; Memory Gold accents |
+| 3 Alive | Late story | 100% | Warm edge light on world objects (never a character rim light); Memory Gold accents |
 
 **Never changes:** semantic colours, intent and door icons, UI text, Nerlings
 (always at full warmth), and the hero's shape. The colour grade sits on a
@@ -262,14 +264,19 @@ only the frame accents warm a little.
 |---|---|
 | Attack red vs heal and Root green | Blade/diamond vs plus/root; "−" vs "+" on numbers |
 | Ignite vs Ember family | Jagged three-tongue flame on enemies vs single curled flame on the ally side |
+| Attack intent vs Ignite | Blade on a diamond plate with a damage number vs jagged three-tongue flame with a stack number |
 | Tide vs block vs Mist | Wave crest vs shield vs fog bars |
 | Weak vs Mist | Chevron vs fog bars; Weak only appears as a status |
-| Mist vs Chaos | Straight stacked bars vs filled orb with ring |
+| Mist vs Chaos | Fog bars (three thick, rounded horizontal bars, staggered left and right) vs filled orb with ring |
 | Root vs heal | Branching root vs plus sign |
 | Chaos vs Night Violet backdrops | The magenta ring adds contrast in brightness |
 | Sparks vs Memory Gold | Star icon vs full-scene glow |
 
 Every semantic colour has a matching glyph, so colour is never the only signal.
+
+Under reduced motion, flicker is off, so Ignite and the Ember family are told
+apart by glyph alone (three jagged tongues vs one curled flame). That is
+acceptable: the glyph is the main signal, and flicker is only extra.
 
 ## 5. Character Design Direction
 
