@@ -55,19 +55,19 @@ func _ready() -> void:
 	add_child(bg)
 	status_label = _label(Vector2(20, 12), 22)
 	var hero_panel := _panel(Vector2(30, 110), Vector2(230, 200), Color("2e4a3a"))
-	hero_label = _wrapped(_label(Vector2(12, 10), 19, hero_panel), Vector2(206, 184))
-	frag_panel = _panel(Vector2(275, 120), Vector2(265, 150), Color("4a3a1e"))
+	hero_label = _wrapped(_label(Vector2(12, 10), 17, hero_panel), Vector2(206, 184))
+	frag_panel = _panel(Vector2(275, 120), Vector2(265, 86), Color("4a3a1e"))
 	frag_style = frag_panel.get_theme_stylebox("panel")
-	frag_label = _wrapped(_label(Vector2(12, 10), 18, frag_panel), Vector2(241, 130))
+	frag_label = _wrapped(_label(Vector2(12, 8), 16, frag_panel), Vector2(241, 74))
 	for k in MAX_FOES:
 		var x := 560.0 + k * 235.0
 		var p := _panel(Vector2(x, 110), Vector2(220, 200), Color("5a2e2e"))
 		foe_panels.append(p)
-		foe_labels.append(_wrapped(_label(Vector2(12, 10), 18, p), Vector2(196, 184)))
+		foe_labels.append(_wrapped(_label(Vector2(12, 10), 17, p), Vector2(196, 184)))
 		var il := _wrapped(_label(Vector2(x, 30), 19), Vector2(220, 78))
 		il.add_theme_color_override("font_color", Color("ffd27a"))
 		intent_labels.append(il)
-	log_label = _label(Vector2(275, 322), 15)
+	log_label = _label(Vector2(275, 222), 15)
 	log_label.add_theme_color_override("font_color", Color("c9c2d6"))
 	hint_line = ColorRect.new()
 	hint_line.color = Color(1, 1, 1, 0.12)
@@ -291,12 +291,18 @@ func _refresh() -> void:
 	if b.turn != logged_turn and b.result == "":
 		logged_turn = b.turn
 		_rec(_turn_snapshot())
-	var burn: int = b.burn_next_turn() if b.result == "" else 0
-	hero_label.text = "YOU\nHP %d / %d\nBlock %d%s%s%s" % [b.hero.hp, b.hero.max, b.hero.block,
-		"\nWeak %d (-25%% damage)" % b.hero.weak if b.hero.weak > 0 else "",
-		"\nIgnite %d" % b.hero.ignite if b.hero.ignite > 0 else "",
-		"\nBURN NEXT TURN: %d" % burn if burn > 0 else ""]
-	hero_label.add_theme_color_override("font_color", Color("ff9a7a") if burn >= b.hero.hp else Color.WHITE)
+	var fc: Dictionary = b.forecast()
+	var status: Array = []
+	if b.hero.weak > 0:
+		status.append("Weak %d (-25%%)" % b.hero.weak)
+	if b.hero.ignite > 0:
+		status.append("Ignite %d" % b.hero.ignite)
+	hero_label.text = "YOU\nHP %d / %d · Block %d%s" % [b.hero.hp, b.hero.max, b.hero.block,
+		"\n" + " · ".join(status) if not status.is_empty() else ""]
+	if b.result == "":
+		hero_label.text += "\nEnemy turn: -%d (%d hit, %d burn)\nNext turn: HP %d" % [
+			fc.hit + fc.burn, fc.hit, fc.burn, fc.hp_next]
+	hero_label.add_theme_color_override("font_color", Color("ff9a7a") if b.result == "" and fc.hp_next <= 0 else Color.WHITE)
 	for k in MAX_FOES:
 		var shown: bool = k < b.foes.size()
 		foe_panels[k].visible = shown
@@ -309,19 +315,20 @@ func _refresh() -> void:
 			foe_labels[k].text = "%s\nDefeated" % f.name.to_upper()
 			intent_labels[k].text = ""
 			continue
-		foe_labels[k].text = "%s\nHP %d / %d\nBlock %d%s%s" % [f.name.to_upper(), f.hp, f.max, f.block,
+		foe_labels[k].text = "%s\nHP %d / %d · Block %d%s%s" % [f.name.to_upper(), f.hp, f.max, f.block,
 			"\nWeak %d" % f.weak if f.weak > 0 else "",
-			"\nBurns %d at its turn" % f.ignite if f.ignite > 0 else ""]
+			"\nIgnite %d" % f.ignite if f.ignite > 0 else ""]
 		if f.ignite >= f.hp:
 			foe_labels[k].text += "\nDIES TO BURN"
-		var it: Dictionary = b.intent(f)
-		intent_labels[k].text = _intent_short(it, f.weak > 0)
+		elif f.ignite > 0:
+			foe_labels[k].text += "\nNext turn: HP %d" % (f.hp - f.ignite)
 		if b.sniffed_turn == b.turn:
-			intent_labels[k].text += "\nthen " + _intent_short(b.intent_after_next(f), false)
+			foe_labels[k].text += "\nThen: " + _intent_short(b.intent_after_next(f), false)
+		intent_labels[k].text = _intent_short(b.intent(f), f.weak > 0)
 	var fill := float(b.charge) / (Battle.CHARGE_MAX - 1)
 	frag_style.bg_color = Color("3a2c16").lerp(Color("b06a1c"), clampf(fill, 0.0, 1.0))
 	charge_bar.size.x = 1280.0 * b.charge / Battle.CHARGE_MAX
-	frag_label.text = "EMBER FRAGMENT\nCharge %d / %d  [%s%s]\nAt 3 attacks, all enemies\nget 3 Ignite + Weak 1" % [
+	frag_label.text = "EMBER FRAGMENT  %d / %d  [%s%s]\nFires on every 3rd attack:\nall enemies Ignite 3, Weak 1" % [
 		b.charge, Battle.CHARGE_MAX, "#".repeat(b.charge), "-".repeat(Battle.CHARGE_MAX - b.charge)]
 	energy_label.text = "Energy %d / %d" % [b.energy, Battle.ENERGY]
 	piles_label.text = "Deck %d · Draw %d · Discard %d · Faded %d" % [run_deck.size(), b.draw_pile.size(), b.discard.size(), b.faded.size()]

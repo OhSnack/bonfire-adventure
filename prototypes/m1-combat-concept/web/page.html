@@ -109,7 +109,7 @@ window.bonefireLog = (() => {
   return {
     add(line) { lines.push(line); save(); update(); },
     text() {
-      return ['Bonefire M1 play log', 'Build: v12 (as v11, plus drag hints, fragment glow, short intents, burn warnings, centred layout)',
+      return ['Bonefire M1 play log', 'Build: v13 (as v12, plus enemy-turn forecast on the hero, next-turn HP on hounds, smaller fragment panel)',
         'Copied: ' + new Date().toISOString(), `Runs: ${runs()}`, '', ...lines].join('\n');
     },
     clear() { lines = []; save(); update(); },

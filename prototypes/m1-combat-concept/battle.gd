@@ -143,12 +143,22 @@ func preview(i: int, target: Dictionary = {}) -> Dictionary:
 	return out
 
 
-# Ignite you will burn for at the start of your next turn, counting what living enemies intend to add.
-func burn_next_turn() -> int:
-	var total: int = hero.ignite
+# What the enemy turn will do to you if you end the turn now, in turn order: each enemy burns first
+# and only acts if it survives; its attack hits your current block. Returns hit, burn and your HP after.
+func forecast() -> Dictionary:
+	var block: int = hero.block
+	var hit := 0
+	var burn: int = hero.ignite
 	for f in alive():
-		total += intent(f).ignite
-	return total
+		if f.hp - f.ignite <= 0:
+			continue
+		var it: Dictionary = intent(f)
+		var dmg: int = int(floor(it.attack * 0.75)) if f.weak > 0 else it.attack
+		var blocked := mini(block, dmg)
+		block -= blocked
+		hit += dmg - blocked
+		burn += it.ignite
+	return {"hit": hit, "burn": burn, "hp_next": hero.hp - hit - burn}
 
 
 func end_turn() -> void:
