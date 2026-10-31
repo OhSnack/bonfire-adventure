@@ -70,10 +70,26 @@ Hook). The clues stay very subtle so the twist is not spoiled.
 
 ## 2. Mood & Atmosphere
 
-[To be designed] — for each major game state (exploration, combat, victory,
-defeat, menus — whichever this game has): the emotional target, lighting
-character (time of day, colour temperature, contrast), 3–5 atmospheric
-descriptors, and energy level. Each state must look distinct from the others.
+Each state has a fixed lighting identity: its contrast, light direction and
+energy. The region sets the hue family, and the colour stage (Section 4) sets how
+saturated and warm it is. So the same state looks the same everywhere, just more
+alive later.
+
+| State | Emotional target | Lighting | Descriptors | Energy | Mood carrier |
+|---|---|---|---|---|---|
+| Room exploration and door choice | Quiet curiosity, a little lonely | The region's hue family, soft and low contrast, top-down ambient light. Doors are the brightest shapes. | hushed, drifting, dusty, expectant | Low | Spirit wisps leaking through door gaps |
+| Card combat | Focused and in control | The region's hues pushed into a dimmed backdrop, with high contrast in front and a side key light on the fighters | clear, tense, grounded, staged | Medium | A darkened backdrop so the fighters and icons stand forward |
+| Elite or boss fight | Awe and pressure | The region's colour pushed hard, with strong rim light behind the enemy. In later regions the darker world makes the hero's warmth stand out more. | towering, heavy, charged, dramatic | High | The enemy's back-light; vignette at the screen edges |
+| Events and NPCs | Strange, intimate, uncertain | Single-source pools of light (a lantern, a candle) with violet ambient | uncanny, close, secretive, tender | Low–medium | One local light the scene is gathered around |
+| Haven (home bonfire) | Safety and belonging | The warmest place in the game. Bonfire light from below, soft falloff. | cosy, gathered, flickering, safe | Low | The bonfire, plus residents lit by it |
+| Memory moment | Bittersweet recognition | A gold glow blooms from the centre and the world briefly fades back | luminous, still, aching, gentle | Low, then a soft swell | A colour "breath" that adds the new stage |
+| Final approach and the Angel fight | Solemn resolve: small, but not alone | The deepest, coolest and darkest world in the game, rich indigo and violet, never grey. The hero and companions are the main warm light. | vast, deep, quiet, luminous, resolute | High, but held | A warm group of hero and companions against a cold, beautiful dark |
+| Victory and run end | Relief, quiet pride | Warm amber wash, raised overall brightness | exhaling, warm, earned, open | Medium | Companions glowing brighter around the hero |
+| Death and defeat | Sad but held, never graphic | Colour drains toward Ash and Slate. Light fades, never cuts to black. | fading, soft, sorrowful, gentle | Very low | The companions' flames dimming last |
+| Menus | Calm invitation | A dim haven-style backdrop with a single bonfire glow | still, warm-edged, simple, waiting | Low | The bonfire ember idling |
+
+**Gentle death:** defeat never shows breaking bones, scattering or violence
+(anti-pillar: not graphic). The hero settles and the light fades.
 
 ## 3. Shape Language
 
