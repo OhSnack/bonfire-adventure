@@ -93,9 +93,60 @@ alive later.
 
 ## 3. Shape Language
 
-[To be designed] — character silhouette philosophy (readable at thumbnail
-size, one distinguishing trait per archetype), environment geometry, UI shape
-grammar, and hero versus supporting shapes.
+**Silhouette philosophy.** Rounded shapes mean friend, angular shapes mean
+threat. Each archetype has one trait that still reads at phone thumbnail size
+(about 48 px tall).
+
+| Archetype | Base shape | Distinguishing trait |
+|---|---|---|
+| Hero | Round. A big skull on a small body (child proportions, about 2.5 heads tall) | His fixed crown of hair locks (Section 1, principle 3) |
+| Nerlings | Teardrop with the point facing up | The flame tip, with the family glyph (Section 4) in the core |
+| Enemies (e.g. Hellhound) | Angular, sharp, heavy at the front | One exaggerated feature. Hellhound: a jagged ridge of flame along its spine. |
+| NPC residents | Stable rectangles, tall or wide | One prop each: the merchant's pack, the fortune teller's veil |
+
+The Hellhound is angular and spiky. The hero stays round and smooth, with no
+ears, snout or tail (Section 1, dog-clue constraint), so the two never share a
+silhouette.
+
+**Isometric rooms.** A 2:1 isometric grid with soft-cornered blocks. Floors are
+low contrast, walls are darker, and door arches are the strongest shapes in the
+room, so the eye goes to the next choice first (Pillar 1).
+
+**UI shape grammar**
+- **Cards:** rounded rectangles, because they belong to the player.
+- **Player and ally info** (companion charge rings, block): circles and shields.
+- **Enemy intents:** angular plates; an attack intent sits on a diamond.
+- **Statuses:** one fixed glyph each. Ignite is a jagged three-tongue flame, Weak
+  a cracked chevron pointing down, block a shield.
+- **No skull icons** for danger or death: the hero is a skeleton, and a skull
+  would make him read as a threat.
+
+**Door symbols.** A door answers two questions, "what kind of room?" and "which
+Nerling family?", with two separate shapes.
+- **Encounter type is shown by a large badge's outline:** a round badge with
+  crossed blades for a regular fight, a spiked crown for an elite, a large
+  horned double ring for a boss, a lantern for an event and a coin for the
+  merchant. Badges are neutral Ash Bone, so the type reads from shape alone.
+- **The Nerling family is shown by a small round medallion attached to the
+  badge's edge**, holding the family glyph (Section 4) in the family colour. It
+  is required on elites and optional elsewhere. A door with no family has no
+  medallion; a door with two families shows two side by side. When every path is
+  an elite, the badges match and the medallions are what the player compares.
+- **Type and family never overlap**, both read in greyscale, and neither relies
+  on colour alone.
+- **In the room,** the scent wisp drifting from the door gap forms the
+  medallion (Section 1). The door arch may glow faintly in the family colour,
+  but only as an extra cue.
+- **Exact placement and size** are set in Section 7 or the door UX spec after a
+  phone-size mockup. A medallion at 60% of a 48 dp badge gives a glyph of about
+  24 px, below the 29 px target, so size must be tested.
+- **On Hades:** we take its clarity (a door that previews its reward), not its
+  icon designs. Every badge and glyph is original.
+
+**Hero versus supporting shapes.** The hero is the only small, round,
+high-value silhouette with a rim light. Supporting characters sit at lower
+contrast. Nerlings are the exception: they are the brightest shapes on the
+player's side (Section 1, principle 2).
 
 ## 4. Color System
 
