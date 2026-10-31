@@ -1,0 +1,221 @@
+<!-- PROTOTYPE - NOT FOR PRODUCTION -->
+<!-- Question: web wrapper for the M1 combat prototype (loader + play log). build_web.sh embeds the game data. -->
+<!-- Date: 2026-10-30 -->
+<title>Bonefire M1 Combat</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+/* One-screen game: the Godot canvas fills the frame; a loading card sits over it until the engine starts. */
+:root {
+  --bg: #120e17;
+  --panel: #1f1828;
+  --fg: #ece6f2;
+  --muted: #a99fb8;
+  --ember: #f0a04b;
+  --danger: #e07a7a;
+  --font-ui: "Atkinson Hyperlegible", system-ui, sans-serif;
+  color-scheme: dark;
+}
+html, body { height: 100%; margin: 0; overflow: hidden; background: var(--bg); color: var(--fg); }
+body { touch-action: none; font-family: var(--font-ui); }
+#canvas { display: block; outline: none; }
+#status {
+  position: fixed; inset: 0; display: grid; place-items: center;
+  background: var(--bg);
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.card { display: grid; gap: 12px; max-width: 32rem; padding: 24px; background: var(--panel); border-radius: 12px; }
+.card h1 { margin: 0; font-size: 1.4rem; text-wrap: balance; }
+.card p { margin: 0; color: var(--muted); line-height: 1.5; }
+.ember { color: var(--ember); }
+#status-progress { width: 100%; accent-color: var(--ember); }
+#status-notice { color: var(--danger); white-space: pre-wrap; }
+#rotate { display: none; }
+@media (orientation: portrait) and (max-width: 700px) {
+  #rotate {
+    display: grid; place-items: center; position: fixed; inset: 0; z-index: 5;
+    background: var(--bg); padding: 24px; text-align: center; color: var(--fg);
+  }
+}
+#tools {
+  position: fixed; z-index: 10; display: flex; flex-direction: column; gap: 6px;
+  left: max(8px, env(safe-area-inset-left, 0px)); bottom: max(8px, env(safe-area-inset-bottom, 0px));
+}
+#tools button {
+  font: 600 12px var(--font-ui); color: var(--fg); background: rgba(31, 24, 40, 0.85);
+  border: 1px solid var(--muted); border-radius: 6px; padding: 5px 8px; cursor: pointer;
+}
+#tools button[hidden] { display: none; }
+#log-panel {
+  position: fixed; inset: 0; z-index: 20; display: grid; place-items: center; background: rgba(10, 8, 14, 0.8);
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 16px;
+}
+#log-panel[hidden] { display: none; }
+#log-panel .card { width: min(56rem, 100%); max-height: 100%; grid-template-rows: auto auto minmax(0, 1fr) auto; }
+#log-text {
+  width: 100%; min-height: 8rem; height: min(50vh, 28rem); box-sizing: border-box; resize: none;
+  font: 12px/1.4 ui-monospace, Menlo, Consolas, monospace; color: var(--fg); background: var(--bg);
+  border: 1px solid var(--muted); border-radius: 6px; padding: 8px;
+}
+.log-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.log-actions button {
+  font: 600 14px var(--font-ui); border-radius: 6px; padding: 8px 14px; cursor: pointer;
+  border: 1px solid var(--muted); background: var(--panel); color: var(--fg);
+}
+.log-actions button.primary { background: var(--ember); color: var(--bg); border-color: var(--ember); }
+.log-actions button:focus-visible, #tools button:focus-visible { outline: 2px solid var(--ember); outline-offset: 2px; }
+#log-status { color: var(--muted); font-size: 14px; }
+</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+
+<canvas id="canvas">Your browser does not support the canvas tag.</canvas>
+<div id="status">
+  <div class="card">
+    <h1>Bonefire <span class="ember">M1 combat test</span></h1>
+    <p>A three-fight run against Hellhound packs (two, two, then three), with a card pick between fights. Drag attacks onto a Hellhound and skills above the line; the Ember fragment fires on its own every 3 attacks.</p>
+    <progress id="status-progress"></progress>
+    <p id="status-text">Loading the game engine (about 10 MB)…</p>
+    <p id="status-notice" hidden></p>
+  </div>
+</div>
+<div id="rotate"><p>Turn your phone sideways to play.</p></div>
+<div id="tools">
+  <button id="fullscreen" type="button">Full screen</button>
+  <button id="log-open" type="button">Play log (0 runs)</button>
+</div>
+<div id="log-panel" hidden>
+  <div class="card">
+    <h1>Play log</h1>
+    <p>Every run you play in this browser, turn by turn. Copy it and paste it into the chat with Claude.</p>
+    <textarea id="log-text" readonly aria-label="Play log text"></textarea>
+    <div class="log-actions">
+      <button id="log-copy" class="primary" type="button">Copy</button>
+      <button id="log-close" type="button">Back to the game</button>
+      <button id="log-clear" type="button">Clear log</button>
+      <span id="log-status" role="status"></span>
+    </div>
+  </div>
+</div>
+<script>
+// Play log: the game sends one line per event; kept in this browser so runs across reloads add up.
+window.bonefireLog = (() => {
+  const KEY = 'bonefire-m1-log';
+  let lines = [];
+  try { lines = JSON.parse(localStorage.getItem(KEY) || '[]'); } catch (e) { lines = []; }
+  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(lines.slice(-20000))); } catch (e) { /* storage blocked: keep in memory */ } };
+  const runs = () => lines.filter((l) => l.includes('=== RUN') && l.includes('START')).length;
+  const update = () => { const n = runs(); document.getElementById('log-open').textContent = `Play log (${n} run${n === 1 ? '' : 's'})`; };
+  return {
+    add(line) { lines.push(line); save(); update(); },
+    text() {
+      return ['Bonefire M1 play log', 'Current build: v15 (as v14; each run line names the build it was played on)',
+        'Copied: ' + new Date().toISOString(), `Runs: ${runs()}`, '', ...lines].join('\n');
+    },
+    clear() { lines = []; save(); update(); },
+    update,
+  };
+})();
+(() => {
+  const panel = document.getElementById('log-panel');
+  const text = document.getElementById('log-text');
+  const status = document.getElementById('log-status');
+  const clearBtn = document.getElementById('log-clear');
+  let clearArmed = false;
+  window.bonefireLog.update();
+  document.getElementById('log-open').addEventListener('click', () => {
+    text.value = window.bonefireLog.text();
+    status.textContent = '';
+    clearArmed = false; clearBtn.textContent = 'Clear log';
+    panel.hidden = false;
+  });
+  document.getElementById('log-close').addEventListener('click', () => { panel.hidden = true; });
+  // Full screen where the browser allows it; the canvas follows the window size.
+  const fsBtn = document.getElementById('fullscreen');
+  const root = document.documentElement;
+  if (!root.requestFullscreen && !root.webkitRequestFullscreen) fsBtn.hidden = true;
+  const syncFs = () => { fsBtn.textContent = (document.fullscreenElement || document.webkitFullscreenElement) ? 'Exit full screen' : 'Full screen'; };
+  document.addEventListener('fullscreenchange', syncFs);
+  document.addEventListener('webkitfullscreenchange', syncFs);
+  fsBtn.addEventListener('click', async () => {
+    try {
+      if (document.fullscreenElement || document.webkitFullscreenElement) {
+        await (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+      } else {
+        await (root.requestFullscreen || root.webkitRequestFullscreen).call(root);
+        if (screen.orientation && screen.orientation.lock) screen.orientation.lock('landscape').catch(() => {});
+      }
+    } catch (e) {
+      fsBtn.textContent = 'Full screen not allowed here';
+    }
+  });
+  document.getElementById('log-copy').addEventListener('click', () => {
+    const fallback = () => {
+      text.focus(); text.select();
+      let ok = false;
+      try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+      status.textContent = ok ? 'Copied.' : 'Copying is blocked here: the text is selected, so copy it with your keyboard or long-press.';
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text.value).then(() => { status.textContent = 'Copied.'; }, fallback);
+    } else {
+      fallback();
+    }
+  });
+  clearBtn.addEventListener('click', () => {
+    if (!clearArmed) { clearArmed = true; clearBtn.textContent = 'Tap again to clear'; return; }
+    window.bonefireLog.clear();
+    text.value = window.bonefireLog.text();
+    clearArmed = false; clearBtn.textContent = 'Clear log';
+    status.textContent = 'Log cleared.';
+  });
+})();
+</script>
+
+<script>
+// The game data is embedded below; the engine file is published gzipped to fit the artifact size limit; serve Godot the decompressed bytes.
+const PCK_B64 = '__PCK_B64__';
+const realFetch = window.fetch.bind(window);
+window.fetch = async (input, init) => {
+  const url = typeof input === 'string' ? input : input.url;
+  if (url.endsWith('index.pck')) {
+    const bytes = Uint8Array.from(atob(PCK_B64), (c) => c.charCodeAt(0));
+    return new Response(bytes, { status: 200, headers: { 'Content-Type': 'application/octet-stream' } });
+  }
+  if (url.endsWith('index.wasm')) {
+    const r = await realFetch('godot-engine-gzip.wasm', init);
+    if (!r.ok) return r;
+    const body = r.body.pipeThrough(new DecompressionStream('gzip'));
+    return new Response(body, { status: 200, headers: { 'Content-Type': 'application/wasm' } });
+  }
+  return realFetch(input, init);
+};
+</script>
+<script src="index.js"></script>
+<script>
+const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":false,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":14148,"index.wasm":39514754},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
+const engine = new Engine(GODOT_CONFIG);
+const statusEl = document.getElementById('status');
+const progressEl = document.getElementById('status-progress');
+const textEl = document.getElementById('status-text');
+const noticeEl = document.getElementById('status-notice');
+
+function fail(err) {
+  console.error(err);
+  progressEl.hidden = true;
+  textEl.textContent = 'The game engine could not start in this browser. Send Claude the message below.';
+  noticeEl.textContent = (err && err.message) || String(err);
+  noticeEl.hidden = false;
+}
+
+const missing = Engine.getMissingFeatures({ threads: false });
+if (missing.length) {
+  fail(new Error('Missing browser features: ' + missing.join(', ')));
+} else {
+  engine.startGame({
+    onProgress(current, total) {
+      if (current > 0 && total > 0) { progressEl.value = current; progressEl.max = total; }
+    },
+  }).then(() => statusEl.remove(), fail);
+}
+</script>

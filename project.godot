@@ -1,0 +1,13 @@
+; Engine configuration file.
+; run/main_scene is left unset until a scene exists (/dev-story or the developer sets it).
+
+config_version=5
+
+[application]
+
+config/name="Bonefire"
+config/features=PackedStringArray("4.7", "Mobile")
+
+[rendering]
+
+renderer/rendering_method="mobile"
