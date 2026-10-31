@@ -75,7 +75,7 @@ first and Narrative second; the ranking is not yet written down.
 - Over-defending to build carried-over block.
 
 ### Core Mechanics
-1. Turn-based card combat: 4 energy per turn, draw 5, full enemy intent, block carries over up to a cap.
+1. Turn-based card combat: 4 energy per turn, draw 6, full enemy intent, block carries over up to a cap (M1-tested).
 2. Nerlings: freed from trapped Ners; per-Nerling charge triggers; automatic unleash; five families (Ember, Tide, Mist, Root, Chaos).
 3. Run map: 3 regions × (3 rooms of 2 encounters + boss); after each room choose 1 of 3 doors; a card pick after every battle; events are room objects with a choice panel (see the design doc's Systems › Events); sparks (run currency) convert to Embers at run end.
 4. The haven: residents (Smith, Keeper, Nimrod, Ashmedai) paid with Embers; bonds unlock content and memories.
@@ -181,7 +181,8 @@ power, a soul for a soul); Spiritfarer and Hollow Knight scores; Coco.
 ## Risks and Open Questions
 
 ### Design Risks
-- Run length only fits if a regular battle takes about 1.5 min and a boss about 3 min; measure in M1.
+- Measured in M1, a regular battle takes 30–55 s (half the 1.5 min planned), so a region runs well under its 8–12 min budget; the pacing target needs restating.
+- The basic Ember fragment's payoff (3 Ignite) felt too small to make deliberate priming satisfying (M1).
 - Key cards with Haunt and Linger sit in the opening hand of every normal fight; Forgiveness's Stun can stun-lock the Angel.
 
 ### Technical Risks
@@ -218,10 +219,16 @@ Proposed until the owner decides.
 **Core hypothesis**: one battle with the stick deck and one auto-unleash Nerling is
 fun to replay (M1 combat prototype).
 
-**Required for MVP** (M1, from the doc):
-1. One battle with the 10-card stick deck (hero: 40 health, 4 energy, draw 5, block cap 3).
-2. One enemy with full intent (Shed: 45 health, cycling intents).
-3. One auto-unleash Nerling (Ember Nerling: +1 charge per attack, fires at 4).
+**Required for MVP** (M1, as tested on 2026-10-30 to 31):
+1. Battles with the 12-card starting deck (hero: 40 health, 4 energy, draw 6, block cap 3).
+2. One enemy with full intent: the Hellhound (15 health; attack 4 + 1 Ignite + Weak 2 → attack 5 +
+   1 Ignite + 6 block → attack 6 + 4 Ignite), in packs of 2 and 3.
+3. One auto-unleash fragment: the Ember fragment (+1 charge per attack, fires at 3: all enemies get
+   3 Ignite and Weak 1).
+
+**M1 result:** PROCEED, with the creative director's concern that the hook (fragment priming) and
+what sets the game apart are still untested. Card list, numbers and play logs are in the design
+doc's Content tab and in `prototypes/m1-combat-concept/REPORT.md`.
 
 **Explicitly NOT in MVP**: rooms and map, haven, mantles, endings.
 
