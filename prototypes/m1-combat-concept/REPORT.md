@@ -21,11 +21,13 @@ sensible play clearly beating careless play, and the player wanting another figh
 
 That the fragment's automatic unleash is readable and creates real priming decisions at that pace.
 
-**Outcome: not yet proven.** The fragment fired 1–2 times per fight, but the owner did not plan around
-it. On a phone the first build drew in a small part of the screen and the intents and fragment were
-hard to read. After the readability pass (v12–v13) the logs show some deliberate use (spreading
-attacks across three hounds so the all-enemy unleash hit each), but the owner still describes the
-fragment as weak.
+**Outcome: partly supported, late.** On v11 the fragment fired 1–2 times per fight but the owner did
+not plan around it: on a phone the first build drew in a small part of the screen and the intents
+and fragment were hard to read. After the readability pass (v12–v13) and the balance change (v14),
+the owner primed on purpose on v15: "I was deliberately trying to prime and use the ignite mechanism
+to spread the damage and kill with ignite." It was hard to pull off "because of the ignite being just
+3": enemies were often left on about 4 HP. So priming is a real decision once the screen is readable,
+but the basic fragment's payoff is too small to make it satisfying.
 
 ---
 
@@ -110,6 +112,23 @@ let the owner play on a phone without installing anything.
   run 1 and v14 run B, fight 3, turn 1). Possible priming, but the log cannot show intent.
 - Deaths: 5, all on v11–v12, all in the 3-hound fight, all to burn (11–21 per tick).
 
+**v15 play log (4 complete runs + 1 unfinished, 2026-10-31; v15 plays the same as v14):**
+- All 4 cleared the region, with 19–24 HP left. Since the Hellhound change: 6 of 6 cleared (2 of 7 before).
+- Pair fights cost 0–9 HP (mostly 0–5), so with the 4 HP heal you start most fights near full; the
+  3-hound fight costs a steady 15–20 HP. All the difficulty now sits in the 3-hound fight, and no
+  run was lost, so "deaths have more than one cause" (CD concern 3) cannot be tested on this build.
+- Greater Ignite became the pick: 5 of 8 v15 picks (Ember Swing 2, Brace 1). Most kills were still
+  burn kills.
+- Block absorbed attacks fully when played ("0 through block" several times), but 3–5 Guards were
+  often left unplayed; against 15-HP Hellhounds, killing is the better use of energy.
+- The fragment fired 1–2 times per fight, twice in every 3-hound fight, and twice in one turn once.
+  The owner confirmed the priming was deliberate (see Riskiest Assumption).
+- Fights 20–66 s (one 82 s, with a 52 s first turn); runs 108–164 s.
+- 3 cancelled drags, all dropped low in the hand area; the owner confirmed these were deliberate
+  cancels ("to cancel the play"), so drag-to-play is working as intended.
+- Owner's tuning thought, for later: one less Hellhound HP would let the 3-Ignite unleash finish more
+  kills, "but then it becomes probably a little bit too trivial to win."
+
 ---
 
 ## Metrics
@@ -119,7 +138,7 @@ let the owner play on a phone without installing anything.
 | Path used | Engine (Godot 4.7.2, web export) |
 | Iterations to playable | First build was playable on desktop; readable on a phone only from v12, after the first playtest; 14 published builds in total |
 | Prototype duration | 2 days (2026-10-30 to 2026-10-31) |
-| Playtesters | 1 internal (the owner), 9 logged runs (4 on v11, 3 on v12, 2 on v14); 0 external |
+| Playtesters | 1 internal (the owner), 13 complete logged runs (4 on v11, 3 on v12, 2 on v14, 4 on v15); 0 external |
 | Feel assessment | Fights 30–55 s; reading intents and fragment state was the main friction on a phone until v12–v13; no moment "clicked" |
 | Hypothesis verdict | PARTIALLY CONFIRMED: the loop only; the hook (fragment priming) untested. Winnable and losable: yes (owner cleared 2 of 7). About 90 s per fight: no (30–55 s). Wanting another fight: no evidence ("no specific moment that clicks") |
 
@@ -185,10 +204,12 @@ players" out of M1 scope. Concerns and what resolves them:
   stronger than its listed number; the enemy-turn forecast became essential to play.
 
 **Next steps:**
-1. A few more v14 runs, to confirm the balance change beyond 2 runs (CD concern 3: so far block
-   matters and no deaths; Greater Ignite still opens half the fights).
+1. Balance follow-up (CD concern 3): v14–v15 is 6 of 6 cleared, so pairs may now be too easy and the
+   challenge sits only in the 3-hound fight; Greater Ignite is the dominant pick. Revisit once elites
+   and a boss exist, together with the owner's idea of 14-HP Hellhounds.
 2. Next prototype targets the hook: add one differentiator (a second fragment so chains are possible,
-   or a memory card) and look for logged priming decisions (CD concerns 1 and 2).
+   or a memory card), and make the fragment's payoff big enough that deliberate priming pays off
+   (CD concerns 1, 2 and 4: the owner primed on purpose on v15 but found 3 Ignite too little).
 3. Bring the design doc's Content and Systems tabs in line with these numbers and restate the region
    pacing target (CD concern 5).
 4. `/setup-engine godot 4.7.2` (the repo's engine setting is still empty).
@@ -244,6 +265,10 @@ the start, so the time is inflated.
 | v12 | 3 | won, 3 t, 166 s*, 40 → 20, 2 | won, 3 t, 34 s, 24 → 10, 1 | lost, 2 t, from 14 HP (burn 14), 0 | Greater Ignite, Ember Swing | died in fight 3 |
 | v14 | A | won, 2 t, 56 s, 40 → 34, 1 | won, 2 t, 40 s, 38 → 37, 1 | won, 3 t, 87 s, 40 → 24, 3 | Ember Swing, Ember Swing | cleared |
 | v14 | B | won, 2 t, 29 s, 40 → 39, 1 | won, 3 t, 117 s, 40 → 32, 2 | won, 3 t, 30 s, 36 → 7, 2 | Ember Swing, Greater Ignite | cleared |
+| v15 | 1 | won, 3 t, 66 s, → 38, 2 (first turn cut from the paste) | won, 3 t, 38 s, 40 → 31, 1 | won, 3 t, 33 s, 35 → 19, 2 | Greater Ignite, Brace | cleared |
+| v15 | 2 | won, 3 t, 38 s, 40 → 35, 1 | won, 2 t, 20 s, 39 → 35, 1 | won, 3 t, 50 s, 39 → 24, 2 | Greater Ignite, Greater Ignite | cleared |
+| v15 | 3 | won, 2 t, 47 s, 40 → 39, 1 | won, 2 t, 28 s, 40 → 39, 1 | won, 3 t, 32 s, 40 → 20, 2 | Greater Ignite, Ember Swing | cleared |
+| v15 | 4 | won, 1 t, 82 s, 40 → 40, 1 | won, 2 t, 24 s, 40 → 36, 1 | won, 3 t, 56 s, 40 → 20, 2 | Greater Ignite, Ember Swing | cleared |
 
 ---
 
