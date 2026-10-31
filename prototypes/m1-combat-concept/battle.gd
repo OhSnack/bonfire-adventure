@@ -10,15 +10,15 @@ const CARDS := {
 	"guard": {"name": "Guard", "cost": 1, "type": "skill", "block": 5, "desc": "Gain 5 block"},
 	"brace": {"name": "Brace", "cost": 1, "type": "skill", "block": 6, "desc": "Gain 6 block"},
 	"greater": {"name": "Greater Ignite", "cost": 3, "type": "attack", "dmg": 3, "ignite": 8, "desc": "Deal 3 damage\nApply 8 Ignite"},
-	"sniff": {"name": "Sniff", "cost": 0, "type": "skill", "desc": "Draw 1\nSee intent 2 turns ahead"},
-	"spark": {"name": "Spark", "cost": 0, "type": "skill", "desc": "Gain 1 energy\nFade"},
+	"sniff": {"name": "Sniff", "cost": 0, "type": "skill", "desc": "Draw 2\nSee intent 2 turns ahead"},
+	"spark": {"name": "Spark", "cost": 0, "type": "skill", "desc": "Gain 1 energy\nDraw 1\nFade"},
 }
 const DECK := ["swing", "swing", "heavy", "ember_swing", "greater", "guard", "guard", "guard", "guard", "brace", "sniff", "spark"]
 # Hellhound intents cycle in this order; hound k starts k steps in.
 const INTENTS := [
-	{"text": "Attack 1, apply 3 Ignite + Weak 2", "attack": 1, "block": 0, "weak": 2, "ignite": 3},
-	{"text": "Attack 2, apply 3 Ignite, gain 6 block", "attack": 2, "block": 6, "weak": 0, "ignite": 3},
-	{"text": "Apply 8 Ignite", "attack": 0, "block": 0, "weak": 0, "ignite": 8},
+	{"text": "Attack 4, apply 1 Ignite + Weak 2", "attack": 4, "block": 0, "weak": 2, "ignite": 1},
+	{"text": "Attack 5, apply 1 Ignite, gain 6 block", "attack": 5, "block": 6, "weak": 0, "ignite": 1},
+	{"text": "Attack 6, apply 4 Ignite", "attack": 6, "block": 0, "weak": 0, "ignite": 4},
 ]
 const HOUNDS := 2
 const HOUND_HP := 15
@@ -104,9 +104,11 @@ func play(i: int, target: Dictionary = {}) -> void:
 		_gain_block(c.block)
 	match id:
 		"sniff":
-			_draw(1)
+			_draw(2)
 			sniffed_turn = turn
-		"spark": energy += 1
+		"spark":
+			energy += 1
+			_draw(1)
 	if id == "spark":
 		faded.append(id)
 	else:

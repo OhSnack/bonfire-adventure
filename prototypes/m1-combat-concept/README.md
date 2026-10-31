@@ -24,11 +24,12 @@ Riskiest assumption: auto-unleash is readable and creates priming decisions at t
 ## Rules (numbers from the design doc's Content tab, with the owner's 2026-10-30 changes)
 - Hero 40 HP, 4 energy, draw 6; block above 3 is lost at the start of your turn.
 - Deck (12): Swing ×2 (5 dmg), Heavy Swing (12), Ember Swing (2 + 3 Ignite), Greater Ignite (3 energy: 3 + 8 Ignite),
-  Guard ×4, Brace (1 energy: 6 block), Sniff, Spark.
+  Guard ×4, Brace (1 energy: 6 block), Sniff (draw 2, see ahead), Spark (+1 energy, draw 1, Fade).
   Attack damage is 1 lower than the Content tab (owner change, 2026-10-30).
 - Enemies: two Hellhounds (skeletal dogs with fiery plumes; were the Shed), 15 HP each; the second starts
   one step later in the cycle. Intents cycle:
-  attack 1 + 3 Ignite + Weak 2 → attack 2 + 3 Ignite + gain 6 block → apply 8 Ignite.
+  attack 4 + 1 Ignite + Weak 2 → attack 5 + 1 Ignite + gain 6 block → attack 6 + 4 Ignite
+  (v14, after the playtest: damage moved from Ignite to attacks so block matters).
 - Ember fragment: +1 charge per attack card; at 3 it fires mid-turn: 3 Ignite + Weak 1 on every enemy.
 - Between battles (not in this one-battle build): the hero heals 10% of max HP (4).
 - Drag attacks onto a Hellhound; drag skills above the line.

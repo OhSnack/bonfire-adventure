@@ -405,8 +405,8 @@ func _show_preview(i: int, over: int, on_line: bool) -> void:
 		if pv.has("block"):
 			lines.append("+%d BLOCK" % pv.block)
 		match b.hand[i]:
-			"sniff": lines.append("DRAW 1, SEE AHEAD")
-			"spark": lines.append("+1 ENERGY")
+			"sniff": lines.append("DRAW 2, SEE AHEAD")
+			"spark": lines.append("+1 ENERGY, DRAW 1")
 	preview_label.text = "\n".join(lines)
 	preview_label.position = cards[i].position + Vector2(0, -34.0 * lines.size() - 8.0)
 	preview_label.visible = true
