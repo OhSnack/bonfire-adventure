@@ -27,3 +27,8 @@
 # .gitattributes governs the INDEX. It does not retro-fix a working tree that
 # predates the rule -- run `git add --renormalize .` for that.
 .claude/**/*.md text eol=lf
+
+# Third-party and engine-generated files: collapsed in GitHub diffs and left
+# out of language stats. gdUnit4 is vendored unchanged from its v6.2.2 tag.
+addons/gdUnit4/** linguist-vendored linguist-generated
+.godot/global_script_class_cache.cfg linguist-generated
