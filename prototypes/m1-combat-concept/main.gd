@@ -11,6 +11,7 @@ const REGION := [2, 2, 3]  # hounds per fight; 3 is the most a fight can have
 const HEAL := 4  # 10% of max HP after each fight
 const REWARD_POOL := ["greater", "heavy", "ember_swing", "swing", "brace", "guard"]
 const MAX_FOES := 3
+const BUILD := "v15"  # stamped on each run in the play log
 
 var b = Battle.new()
 var fight := 0
@@ -129,7 +130,7 @@ func _build_reward_box() -> void:
 
 func _new_run() -> void:
 	run_no += 1
-	_rec("=== RUN %d START === %s" % [run_no, Time.get_datetime_string_from_system()])
+	_rec("=== RUN %d START (%s) === %s" % [run_no, BUILD, Time.get_datetime_string_from_system()])
 	fight = 0
 	run_deck = Battle.DECK.duplicate()
 	run_time = 0.0
