@@ -37,11 +37,15 @@ body { touch-action: none; font-family: var(--font-ui); }
     background: var(--bg); padding: 24px; text-align: center; color: var(--fg);
   }
 }
-#log-open {
-  position: fixed; top: max(8px, env(safe-area-inset-top, 0px)); left: 30%; z-index: 10;
-  font: 600 13px var(--font-ui); color: var(--fg); background: rgba(31, 24, 40, 0.85);
-  border: 1px solid var(--muted); border-radius: 6px; padding: 6px 10px; cursor: pointer;
+#tools {
+  position: fixed; z-index: 10; display: flex; flex-direction: column; gap: 6px;
+  left: max(8px, env(safe-area-inset-left, 0px)); bottom: max(8px, env(safe-area-inset-bottom, 0px));
 }
+#tools button {
+  font: 600 12px var(--font-ui); color: var(--fg); background: rgba(31, 24, 40, 0.85);
+  border: 1px solid var(--muted); border-radius: 6px; padding: 5px 8px; cursor: pointer;
+}
+#tools button[hidden] { display: none; }
 #log-panel {
   position: fixed; inset: 0; z-index: 20; display: grid; place-items: center; background: rgba(10, 8, 14, 0.8);
   padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
@@ -60,7 +64,7 @@ body { touch-action: none; font-family: var(--font-ui); }
   border: 1px solid var(--muted); background: var(--panel); color: var(--fg);
 }
 .log-actions button.primary { background: var(--ember); color: var(--bg); border-color: var(--ember); }
-.log-actions button:focus-visible, #log-open:focus-visible { outline: 2px solid var(--ember); outline-offset: 2px; }
+.log-actions button:focus-visible, #tools button:focus-visible { outline: 2px solid var(--ember); outline-offset: 2px; }
 #log-status { color: var(--muted); font-size: 14px; }
 </style>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap">
@@ -76,7 +80,10 @@ body { touch-action: none; font-family: var(--font-ui); }
   </div>
 </div>
 <div id="rotate"><p>Turn your phone sideways to play.</p></div>
-<button id="log-open" type="button">Play log (0 runs)</button>
+<div id="tools">
+  <button id="fullscreen" type="button">Full screen</button>
+  <button id="log-open" type="button">Play log (0 runs)</button>
+</div>
 <div id="log-panel" hidden>
   <div class="card">
     <h1>Play log</h1>
@@ -102,7 +109,7 @@ window.bonefireLog = (() => {
   return {
     add(line) { lines.push(line); save(); update(); },
     text() {
-      return ['Bonefire M1 play log', 'Build: v11 (Hellhounds 15 HP in packs of 2, 2, 3; 4 energy, draw 6; fragment fires at 3; card picks after fights 1-2)',
+      return ['Bonefire M1 play log', 'Build: v12 (as v11, plus drag hints, fragment glow, short intents, burn warnings, centred layout)',
         'Copied: ' + new Date().toISOString(), `Runs: ${runs()}`, '', ...lines].join('\n');
     },
     clear() { lines = []; save(); update(); },
@@ -123,6 +130,25 @@ window.bonefireLog = (() => {
     panel.hidden = false;
   });
   document.getElementById('log-close').addEventListener('click', () => { panel.hidden = true; });
+  // Full screen where the browser allows it; the canvas follows the window size.
+  const fsBtn = document.getElementById('fullscreen');
+  const root = document.documentElement;
+  if (!root.requestFullscreen && !root.webkitRequestFullscreen) fsBtn.hidden = true;
+  const syncFs = () => { fsBtn.textContent = (document.fullscreenElement || document.webkitFullscreenElement) ? 'Exit full screen' : 'Full screen'; };
+  document.addEventListener('fullscreenchange', syncFs);
+  document.addEventListener('webkitfullscreenchange', syncFs);
+  fsBtn.addEventListener('click', async () => {
+    try {
+      if (document.fullscreenElement || document.webkitFullscreenElement) {
+        await (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+      } else {
+        await (root.requestFullscreen || root.webkitRequestFullscreen).call(root);
+        if (screen.orientation && screen.orientation.lock) screen.orientation.lock('landscape').catch(() => {});
+      }
+    } catch (e) {
+      fsBtn.textContent = 'Full screen not allowed here';
+    }
+  });
   document.getElementById('log-copy').addEventListener('click', () => {
     const fallback = () => {
       text.focus(); text.select();

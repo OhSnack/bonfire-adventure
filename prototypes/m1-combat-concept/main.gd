@@ -38,6 +38,11 @@ var reward_label: Label
 var reward_buttons: Array = []
 var reward_offer: Array = []
 var hint_line: ColorRect
+var charge_bar: ColorRect
+var frag_style: StyleBoxFlat
+var preview_label: Label
+var flash_t := 0.0  # seconds left of the unleash flash
+var clock := 0.0
 var run_no := 0
 var log_sent := 0  # battle log lines already recorded
 var logged_turn := -1
@@ -52,13 +57,14 @@ func _ready() -> void:
 	var hero_panel := _panel(Vector2(30, 110), Vector2(230, 200), Color("2e4a3a"))
 	hero_label = _wrapped(_label(Vector2(12, 10), 19, hero_panel), Vector2(206, 184))
 	frag_panel = _panel(Vector2(275, 120), Vector2(265, 150), Color("4a3a1e"))
+	frag_style = frag_panel.get_theme_stylebox("panel")
 	frag_label = _wrapped(_label(Vector2(12, 10), 18, frag_panel), Vector2(241, 130))
 	for k in MAX_FOES:
 		var x := 560.0 + k * 235.0
 		var p := _panel(Vector2(x, 110), Vector2(220, 200), Color("5a2e2e"))
 		foe_panels.append(p)
 		foe_labels.append(_wrapped(_label(Vector2(12, 10), 18, p), Vector2(196, 184)))
-		var il := _wrapped(_label(Vector2(x, 34), 15), Vector2(220, 74))
+		var il := _wrapped(_label(Vector2(x, 30), 19), Vector2(220, 78))
 		il.add_theme_color_override("font_color", Color("ffd27a"))
 		intent_labels.append(il)
 	log_label = _label(Vector2(275, 322), 15)
@@ -68,6 +74,11 @@ func _ready() -> void:
 	hint_line.position = Vector2(0, PLAY_LINE_Y)
 	hint_line.size = Vector2(1280, 2)
 	add_child(hint_line)
+	charge_bar = ColorRect.new()
+	charge_bar.color = Color("f0a04b")
+	charge_bar.position = Vector2(0, PLAY_LINE_Y - 6)
+	charge_bar.size = Vector2(0, 8)
+	add_child(charge_bar)
 	var hint := _label(Vector2(20, PLAY_LINE_Y - 26), 15)
 	hint.text = "Drag attacks onto a Hellhound · drag skills above this line"
 	hint.add_theme_color_override("font_color", Color(1, 1, 1, 0.4))
@@ -80,6 +91,10 @@ func _ready() -> void:
 	end_btn.add_theme_font_size_override("font_size", 22)
 	end_btn.pressed.connect(_on_end_turn)
 	add_child(end_btn)
+	preview_label = _label(Vector2.ZERO, 26)
+	preview_label.add_theme_color_override("font_outline_color", Color.BLACK)
+	preview_label.add_theme_constant_override("outline_size", 8)
+	preview_label.visible = false
 	_build_reward_box()
 	end_box = _panel(Vector2(400, 220), Vector2(480, 220), Color("101018"))
 	end_label = _wrapped(_label(Vector2(20, 20), 22, end_box), Vector2(440, 120))
@@ -135,6 +150,19 @@ func _start_fight(hp: int) -> void:
 
 
 func _process(delta: float) -> void:
+	clock += delta
+	var primed: bool = b.result == "" and b.charge == Battle.CHARGE_MAX - 1
+	var dragging_attack: bool = drag_i >= 0 and Battle.CARDS[b.hand[drag_i]].type == "attack"
+	var glow := Color.WHITE
+	if flash_t > 0.0:
+		flash_t -= delta
+		glow = Color.WHITE.lerp(Color(2.2, 1.6, 0.6), flash_t / 0.6)
+	elif primed:
+		# Flicker when the next attack fires the fragment; faster while one is being dragged.
+		var speed := 18.0 if dragging_attack else 7.0
+		glow = Color.WHITE.lerp(Color(1.9, 1.4, 0.6), (sin(clock * speed) + 1.0) / 2.0)
+	frag_panel.modulate = glow
+	charge_bar.modulate = glow
 	if b.result == "":
 		fight_time += delta
 		run_time += delta
@@ -170,12 +198,13 @@ func _input(event: InputEvent) -> void:
 			foe_panels[k].modulate = Color(1.4, 1.3, 0.8) if attack and k == over else _foe_tint(k)
 		var on_line: bool = not attack and event.position.y < PLAY_LINE_Y
 		hint_line.color = Color(1, 1, 0.5, 0.6) if on_line else Color(1, 1, 1, 0.12)
+		_show_preview(drag_i, over, on_line)
 
 
 # Index of the living enemy under pos, or -1.
 func _foe_at(pos: Vector2) -> int:
 	for k in b.foes.size():
-		if b.foes[k].hp > 0 and foe_panels[k].get_global_rect().has_point(pos):
+		if b.foes[k].hp > 0 and foe_panels[k].get_global_rect().grow(10).has_point(pos):
 			return k
 	return -1
 
@@ -187,6 +216,7 @@ func _foe_tint(k: int) -> Color:
 func _drop(pos: Vector2) -> void:
 	var i := drag_i
 	drag_i = -1
+	preview_label.visible = false
 	hint_line.color = Color(1, 1, 1, 0.12)
 	var attack: bool = Battle.CARDS[b.hand[i]].type == "attack"
 	var over := _foe_at(pos)
@@ -199,7 +229,7 @@ func _drop(pos: Vector2) -> void:
 	else:
 		_rec("Drag cancelled: %s (dropped at x %d, y %d)" % [card_name, int(pos.x), int(pos.y)])
 	if b.unleashes > unleashes_before:
-		_flash(frag_panel)
+		flash_t = 0.6
 	_refresh()
 
 
@@ -261,9 +291,12 @@ func _refresh() -> void:
 	if b.turn != logged_turn and b.result == "":
 		logged_turn = b.turn
 		_rec(_turn_snapshot())
-	hero_label.text = "YOU\nHP %d / %d\nBlock %d%s%s" % [b.hero.hp, b.hero.max, b.hero.block,
+	var burn: int = b.burn_next_turn() if b.result == "" else 0
+	hero_label.text = "YOU\nHP %d / %d\nBlock %d%s%s%s" % [b.hero.hp, b.hero.max, b.hero.block,
 		"\nWeak %d (-25%% damage)" % b.hero.weak if b.hero.weak > 0 else "",
-		"\nIgnite %d" % b.hero.ignite if b.hero.ignite > 0 else ""]
+		"\nIgnite %d" % b.hero.ignite if b.hero.ignite > 0 else "",
+		"\nBURN NEXT TURN: %d" % burn if burn > 0 else ""]
+	hero_label.add_theme_color_override("font_color", Color("ff9a7a") if burn >= b.hero.hp else Color.WHITE)
 	for k in MAX_FOES:
 		var shown: bool = k < b.foes.size()
 		foe_panels[k].visible = shown
@@ -278,14 +311,16 @@ func _refresh() -> void:
 			continue
 		foe_labels[k].text = "%s\nHP %d / %d\nBlock %d%s%s" % [f.name.to_upper(), f.hp, f.max, f.block,
 			"\nWeak %d" % f.weak if f.weak > 0 else "",
-			"\nIgnite %d (burns at its turn)" % f.ignite if f.ignite > 0 else ""]
+			"\nBurns %d at its turn" % f.ignite if f.ignite > 0 else ""]
+		if f.ignite >= f.hp:
+			foe_labels[k].text += "\nDIES TO BURN"
 		var it: Dictionary = b.intent(f)
-		var t: String = it.text
-		if f.weak > 0 and it.attack > 0:
-			t += " (Weak: %d)" % int(floor(it.attack * 0.75))
-		intent_labels[k].text = "Intent: " + t
+		intent_labels[k].text = _intent_short(it, f.weak > 0)
 		if b.sniffed_turn == b.turn:
-			intent_labels[k].text += "\nThen: " + b.intent_after_next(f).text
+			intent_labels[k].text += "\nthen " + _intent_short(b.intent_after_next(f), false)
+	var fill := float(b.charge) / (Battle.CHARGE_MAX - 1)
+	frag_style.bg_color = Color("3a2c16").lerp(Color("b06a1c"), clampf(fill, 0.0, 1.0))
+	charge_bar.size.x = 1280.0 * b.charge / Battle.CHARGE_MAX
 	frag_label.text = "EMBER FRAGMENT\nCharge %d / %d  [%s%s]\nAt 3 attacks, all enemies\nget 3 Ignite + Weak 1" % [
 		b.charge, Battle.CHARGE_MAX, "#".repeat(b.charge), "-".repeat(Battle.CHARGE_MAX - b.charge)]
 	energy_label.text = "Energy %d / %d" % [b.energy, Battle.ENERGY]
@@ -310,14 +345,65 @@ func _build_hand() -> void:
 		if c.cost > b.energy:
 			color = color.darkened(0.55)
 		var p := _panel(Vector2(start_x + i * (CARD_SIZE.x + 10), HAND_Y), CARD_SIZE, color)
+		if c.type == "attack" and b.charge == Battle.CHARGE_MAX - 1:
+			var sb: StyleBoxFlat = p.get_theme_stylebox("panel")
+			sb.set_border_width_all(4)
+			sb.border_color = Color("f0a04b")
 		var l := _wrapped(_label(Vector2(10, 8), 17, p), Vector2(CARD_SIZE.x - 20, CARD_SIZE.y - 16))
 		l.text = "(%d) %s\n\n%s" % [c.cost, c.name, c.desc]
 		cards.append(p)
 
 
-func _flash(p: Panel) -> void:
-	p.modulate = Color(2.2, 1.6, 0.6)
-	create_tween().tween_property(p, "modulate", Color.WHITE, 0.6)
+# Short intent text, e.g. "ATK 1 · IGNITE 3 · WEAK 2".
+func _intent_short(it: Dictionary, weakened: bool) -> String:
+	var parts: Array = []
+	if it.attack > 0:
+		parts.append("ATK %d" % (int(floor(it.attack * 0.75)) if weakened else it.attack))
+	if it.ignite > 0:
+		parts.append("IGNITE %d" % it.ignite)
+	if it.weak > 0:
+		parts.append("WEAK %d" % it.weak)
+	if it.block > 0:
+		parts.append("BLOCK %d" % it.block)
+	return " · ".join(parts)
+
+
+# Hint above the dragged card: what releasing it here would do.
+func _show_preview(i: int, over: int, on_line: bool) -> void:
+	var c: Dictionary = Battle.CARDS[b.hand[i]]
+	var lines: Array = []
+	if not b.can_play(i):
+		lines.append("NOT ENOUGH ENERGY")
+	elif c.type == "attack":
+		if over < 0:
+			lines.append("Drop on a Hellhound")
+		else:
+			var pv: Dictionary = b.preview(i, b.foes[over])
+			if pv.through == 0:
+				lines.append("BLOCKED")
+			elif pv.blocked > 0:
+				lines.append("-%d HP (%d blocked)" % [pv.through, pv.blocked])
+			else:
+				lines.append("-%d HP" % pv.through)
+			if pv.get("ignite", 0) > 0:
+				lines.append("+%d IGNITE" % pv.ignite)
+			if pv.kills:
+				lines.append("KILLS")
+			if pv.fires:
+				lines.append("FRAGMENT FIRES!")
+	elif not on_line:
+		lines.append("Lift above the line")
+	else:
+		var pv: Dictionary = b.preview(i)
+		if pv.has("block"):
+			lines.append("+%d BLOCK" % pv.block)
+		match b.hand[i]:
+			"sniff": lines.append("DRAW 1, SEE AHEAD")
+			"spark": lines.append("+1 ENERGY")
+	preview_label.text = "\n".join(lines)
+	preview_label.position = cards[i].position + Vector2(0, -34.0 * lines.size() - 8.0)
+	preview_label.visible = true
+	preview_label.move_to_front()
 
 
 func _panel(pos: Vector2, size: Vector2, color: Color) -> Panel:

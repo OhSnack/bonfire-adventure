@@ -4,12 +4,12 @@
 extends RefCounted
 
 const CARDS := {
-	"swing": {"name": "Swing", "cost": 1, "type": "attack", "desc": "Deal 5 damage"},
-	"heavy": {"name": "Heavy Swing", "cost": 2, "type": "attack", "desc": "Deal 12 damage"},
-	"ember_swing": {"name": "Ember Swing", "cost": 1, "type": "attack", "desc": "Deal 2 damage\nApply 3 Ignite"},
-	"guard": {"name": "Guard", "cost": 1, "type": "skill", "desc": "Gain 5 block"},
-	"brace": {"name": "Brace", "cost": 1, "type": "skill", "desc": "Gain 6 block"},
-	"greater": {"name": "Greater Ignite", "cost": 3, "type": "attack", "desc": "Deal 3 damage\nApply 8 Ignite"},
+	"swing": {"name": "Swing", "cost": 1, "type": "attack", "dmg": 5, "desc": "Deal 5 damage"},
+	"heavy": {"name": "Heavy Swing", "cost": 2, "type": "attack", "dmg": 12, "desc": "Deal 12 damage"},
+	"ember_swing": {"name": "Ember Swing", "cost": 1, "type": "attack", "dmg": 2, "ignite": 3, "desc": "Deal 2 damage\nApply 3 Ignite"},
+	"guard": {"name": "Guard", "cost": 1, "type": "skill", "block": 5, "desc": "Gain 5 block"},
+	"brace": {"name": "Brace", "cost": 1, "type": "skill", "block": 6, "desc": "Gain 6 block"},
+	"greater": {"name": "Greater Ignite", "cost": 3, "type": "attack", "dmg": 3, "ignite": 8, "desc": "Deal 3 damage\nApply 8 Ignite"},
 	"sniff": {"name": "Sniff", "cost": 0, "type": "skill", "desc": "Draw 1\nSee intent 2 turns ahead"},
 	"spark": {"name": "Spark", "cost": 0, "type": "skill", "desc": "Gain 1 energy\nFade"},
 }
@@ -95,22 +95,18 @@ func play(i: int, target: Dictionary = {}) -> void:
 		return
 	energy -= c.cost
 	hand.remove_at(i)
+	_log("You play %s" % c.name + (" on %s" % target.name if c.type == "attack" else ""))
+	if c.has("dmg"):
+		_hit(target, c.dmg)
+	if c.has("ignite"):
+		target.ignite += c.ignite
+	if c.has("block"):
+		_gain_block(c.block)
 	match id:
-		"swing": _hit(target, 5)
-		"heavy": _hit(target, 12)
-		"ember_swing":
-			_hit(target, 2)
-			target.ignite += 3
-		"guard": _gain_block(5)
-		"brace": _gain_block(6)
-		"greater":
-			_hit(target, 3)
-			target.ignite += 8
 		"sniff":
 			_draw(1)
 			sniffed_turn = turn
 		"spark": energy += 1
-	_log("You play %s" % c.name + (" on %s" % target.name if c.type == "attack" else ""))
 	if id == "spark":
 		faded.append(id)
 	else:
@@ -127,6 +123,32 @@ func play(i: int, target: Dictionary = {}) -> void:
 				f.weak += 1
 			_log("EMBER FRAGMENT UNLEASHES: 3 Ignite + Weak 1 on all enemies")
 	_check_end()
+
+
+# What playing hand card i on target would do, without doing it (for the drag hint).
+func preview(i: int, target: Dictionary = {}) -> Dictionary:
+	var c: Dictionary = CARDS[hand[i]]
+	var out := {"fires": c.type == "attack" and charge + 1 >= CHARGE_MAX}
+	if c.has("dmg") and not target.is_empty():
+		var dmg: int = c.dmg
+		if hero.weak > 0:
+			dmg = int(floor(dmg * 0.75))
+		out.blocked = mini(target.block, dmg)
+		out.through = dmg - out.blocked
+		out.kills = target.hp - out.through <= 0
+	if c.has("ignite"):
+		out.ignite = c.ignite
+	if c.has("block"):
+		out.block = c.block
+	return out
+
+
+# Ignite you will burn for at the start of your next turn, counting what living enemies intend to add.
+func burn_next_turn() -> int:
+	var total: int = hero.ignite
+	for f in alive():
+		total += intent(f).ignite
+	return total
 
 
 func end_turn() -> void:

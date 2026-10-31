@@ -47,4 +47,15 @@ rewards after each fight: pick 1 of 3 starting cards, and one spirit (Tide fragm
 +2 Ignite, or the Kindle boon: attacks also apply 3 Ignite).
 
 ## Findings
-_Filled in at the debrief._
+In progress (debrief started 2026-10-31). From the owner's play log of 4 runs on v11:
+- Cleared 1 of 4 runs; every death was Ignite burn in the 3-Hellhound fight.
+- Fights took about 30 s (17-38 s, one 72 s), not the 90 s planned; runs 61-113 s.
+- Dominant opener: Greater Ignite + Ember Swing kills a 15-HP hound before it acts, because
+  Ignite burns at the start of the hound's turn.
+- Block cards mostly went unplayed; Hellhound attacks are 1-2 damage.
+- Hypothesis: partially confirmed. The fragment fired, but the owner did not plan around it: on a
+  phone the game drew in a small part of the screen and intents were hard to read.
+- Owner: "a pretty working game except for the difficulties reading, not very different from Slay
+  the Spire", because the defining features (haven, memories, mantles, more fragments) are out of scope.
+- v12 response: centred layout + full screen, drag hints (damage, blocked, kills, fragment fires),
+  fragment glow and flicker when primed, short intents, burn warnings, wider drop zones.
