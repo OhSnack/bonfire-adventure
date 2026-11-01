@@ -115,7 +115,7 @@ Notes on the table:
 | **MVP** | Required for the core loop to function. Without these, you can't test "is this fun?" | One production-quality battle (the M1 battle rebuilt on real systems) | Design FIRST |
 | **Vertical Slice** | Required for one complete, polished area. Demonstrates the full experience. | M2: one region, a boss, two Nerlings, one boon | Design SECOND |
 | **Alpha** | All features present in rough form. Complete mechanical scope, placeholder content OK. | M3 public beta: polished region 1, haven with two residents | Design THIRD |
-| **Full Vision** | Polish, edge cases, nice-to-haves, and content-complete features. | 1.0: 3 regions, 2 mantles, 5 endings, difficulty tiers. No new systems; content on the systems above | Design as needed |
+| **Full Vision** | Polish, edge cases, nice-to-haves, and content-complete features. | 1.0: 3 regions, 2 mantles, first clear plus 1–2 endings (5 designed), difficulty tiers. No new systems; content on the systems above | Design as needed |
 
 > **Review notes (2026-11-01):** TD-SYSTEM-BOUNDARY, PR-SCOPE and CD-SYSTEMS were
 > skipped under lean review mode. An informal review by game-designer,
