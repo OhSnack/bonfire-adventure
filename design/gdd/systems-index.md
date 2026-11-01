@@ -177,6 +177,13 @@ Notes on the table:
 
 ## Recommended Design Order
 
+> **Phase scope (Decided 2026-11-01):** the Systems Design phase covers only the 9
+> MVP systems, orders 1–8 below (order 1 is a pair). It ends when those 9 GDDs are
+> approved. Orders 9 onward are designed when their milestone starts (Vertical Slice,
+> Alpha, 1.0), not in this phase. Reason: the producer's gate concern that designing
+> all 24 at full rigor is about 200–240 h for one developer
+> (`production/gate-checks/gate-systems-design-2026-11-01-full.md`).
+
 | Order | System | Priority | Layer | Agent(s) | Est. Effort |
 |-------|--------|----------|-------|----------|-------------|
 | 1 | Content data format + Action pipeline & event bus (as a pair) | MVP | Foundation | systems-designer, technical-director | L |
