@@ -36,7 +36,7 @@ until renamed; their mechanics stay.
 | **Target Audience** | Teens and adults; likely around a 12+ store rating |
 | **Player Count** | Single-player |
 | **Session Length** | Target: full run 15–25 min (3 regions, about 5–8 min each), expected to grow as card picks and events are added; save-and-resume mid-run |
-| **Monetization** | Free demo plus one-time unlock on mobile; paid with a free demo on PC; optional cosmetics with no gameplay effect |
+| **Monetization** | Free demo plus one-time unlock on mobile; paid with a free demo on PC; optional cosmetics with no gameplay effect; paid cosmetics and Ember cosmetics are separate catalogs that never overlap |
 | **Estimated Scope** | Large: solo developer at 3–12 h/week, planned by milestone, not by date |
 | **Comparable Titles** | Slay the Spire, Hades, Revita |
 
@@ -76,12 +76,12 @@ skill, while recovered memories enter your deck as playable cards.
 
 Nerlings in brief (Decided 2026-11-01; full rules in `design/gdd/systems-index.md`
 #10, to be written up in the Nerlings GDD and validated by M1.5):
-- Each Nerling charges from one kind of hero action, so the deck is the mechanism.
+- Each Nerling charges from one kind of action or total, mostly the hero's, so the deck is the mechanism.
 - Each bar gets harder every time it fires in a turn, so one fire is easy and long
   chains take a built deck.
 - Nerlings can feed each other, and every loop ends on its own.
 - One Nerling at the start of a run and a second in the first room; 5–8 unleashes a
-  turn by region 3 is the skilled ceiling.
+  turn across 3 Nerlings by region 3 is the skilled ceiling.
 
 Scent (Decided 2026-10-31): the hero senses enemy intents and what lies behind the
 next door through scent, the in-world reason intents and door previews exist. It is
@@ -128,7 +128,7 @@ skeleton child whose hair warms as memories return. Full direction:
 
 *Proposed (drafted 2026-11-01, owner to confirm):*
 - **Competence**: deaths are explainable from visible intents and bars; chains reward
-  planning. **Autonomy**: door choice, Nerling families, the starting-Nerling pick.
+  planning. **Autonomy**: door choice, Nerling families, the starting-Nerling pick (Proposed).
   **Relatedness**: resident bonds and the dog's loyalty.
 - **Player types**: mainly Achievers (chain mastery, tiers) and Explorers (memories,
   holes, endings); little for Socializers or Killers, by design.
@@ -164,7 +164,7 @@ Priority when they conflict (Decided): tactics, then story, then accessibility (
 Fairness is a fixed rule, not a trade-off.
 
 ### Pillar 1: Tactical, not luck-driven
-Full enemy intent, fixed energy and a small curated deck: a deliberate move away from casino-style RNG.
+Full enemy intent, fixed energy and a curated deck: a deliberate move away from casino-style RNG.
 
 *Design test*: between a random proc and a visible, plannable effect, choose the visible one.
 
@@ -198,7 +198,7 @@ No pay-to-win, no money-milking.
 | ---- | ---- | ---- |
 | Hades | Boons, haven dialogue, meta-progression, early-access model | Turn-based cards, not action |
 | Slay the Spire | Cards, enemy intent | Auto-unleash companions, memories as cards |
-| Revita | Memory story, pixel art | Story gated by bonds and key cards, not difficulty |
+| Revita | Memory story, pixel art | Story gated by bonds and key cards, not difficulty tiers |
 | Pokémon | Visible overworld encounters | Side-view card battles |
 | Ori and the Blind Forest | Lighting | Pixel art with modern glow |
 
@@ -236,9 +236,10 @@ power, a soul for a soul); Spiritfarer and Hollow Knight scores; Coco.
 ## Risks and Open Questions
 
 ### Design Risks
-- **Top risk: the hook is unproven.** M1 tested one Nerling with one trigger; chains between Nerlings have never been played. Gate: a hook prototype (M1.5: 2 Nerlings, a deliberate 2-fire chain within the first 10 minutes, a chain turn resolving in about 8 s) must pass before M2 content is built. Planning chains on a phone needs a chain preview while dragging a card.
+- **Top risk: the hook is unproven.** M1 tested one Nerling with one trigger; chains between Nerlings have never been played. Gate: a hook prototype (M1.5: 2 Nerlings, a deliberate 2-fire chain within the first 10 minutes, a chain turn resolving in about 8 s, and most testers making a chain on purpose and naming a chain turn as the highlight without being asked) must pass before M2 content is built. Planning chains on a phone needs a chain preview while dragging a card.
 - The twist's clues need a budget: one hole per memory chapter, in dialogue or memory-card text, tied to memory unlock order, so repeated region 1 runs do not spoil it (Narrative Premise; art bible Section 1, Dog-clue constraint).
 - Pacing: M1 fights take 30–55 s, which fits the 15–25 min target. Long chain turns add about 0.5 s per unleash; the speed toggle is required.
+- The offer rule (Pillar 1) may cut the "saw a payoff, pivoted" moment and the surprise of Ashmedai's pools; M2 tests it.
 - Phone legibility: reading intents and Nerling state was M1's main friction on a phone (REPORT). The chain preview and bars must stay readable at phone size.
 - Meeting Ashmedai depends on reaching region 3, so weaker players see Chaos later.
 - The basic Ember fragment's payoff (3 Ignite) felt too small to make deliberate priming satisfying (M1).

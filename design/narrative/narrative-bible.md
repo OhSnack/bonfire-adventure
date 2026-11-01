@@ -3,7 +3,8 @@
 *Spoilers. Story canon for writers and the narrative team. Decided 2026-11-01 unless
 marked Proposed or Open. The concept summary is in `design/gdd/game-concept.md`
 (Narrative Premise); the visual limits on dog clues are in `design/art/art-bible.md`,
-Section 1. Names (Ashmedai, the Angel of Death, the Keeper) are placeholders.*
+Section 1. Names (Ashmedai, the Angel of Death, the Keeper, Nimrod) are placeholders.
+Canon levels: Decided = Established, Proposed = Provisional, Open = Under Review.*
 
 ## Premise and memory rules
 
@@ -35,8 +36,11 @@ Section 1. Names (Ashmedai, the Angel of Death, the Keeper) are placeholders.*
   - *Door quest* (Proposed outline): later fragments add true detail that strains
     against the lie without contradicting it, e.g. "It bent over the bed. It was
     gentle, like it was sorry" and "The bed was warm, and then it wasn't."
-  - The sourness is Ashmedai's mark, not the Angel's smell; it returns at the dark
-    pools. The cold and the silence are the Angel's, who stays solemn, not monstrous.
+  - The sour, spoiled smell is the smell of death: the 12+-safe way to show it
+    without anything graphic. The narrator's strong reaction to it is deliberately the
+    first clue that this is the dog's perspective; there is no Ashmedai clue in the
+    opening. The cold and the silence are the Angel's, who stays solemn, not
+    monstrous.
 - **Why they are reversed.** Ashmedai (placeholder name), a chained being of chaos,
   noticed a foreign soul entering the realm and scrambled him in the crossing, and
   also corrupted the Keeper of memories' view. The hero never chose this; there is no
@@ -78,6 +82,8 @@ Section 1. Names (Ashmedai, the Angel of Death, the Keeper) are placeholders.*
 
 ## Open
 
+- Why the crossing night alone escaped the pronoun swap (the true answer must be
+  written down before the door-quest fragments are drafted).
 - Who chained Ashmedai.
 - The dog's name, and whether the dog's body lives on in the waking world.
 - Where the door-quest fragments of the crossing night unlock.
