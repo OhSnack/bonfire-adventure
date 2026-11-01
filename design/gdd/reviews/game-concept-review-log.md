@@ -61,3 +61,28 @@ Reviewed-Content-Hash: design/gdd/systems-index.md d88a0b5ec56c0a3f6a022817a6895
 Reviewed-Content-Hash: design/art/art-bible.md 4e68264977eab2f43f6ce886965462089879df5d
 Reviewed-Content-Hash: prototypes/m1-combat-concept/REPORT.md 0ecf275264d18112d717be5e2781442bcdb1d31c
 Reviewed-Content-Hash: prototypes/m1-combat-concept/README.md 0e81c8f8786408faac3c8e83263d843a747ed88c
+
+## Review — 2026-11-01 (third) — Verdict: NEEDS REVISION
+Review mode: full · Workflow: full
+Scope signal: n/a (concept, not a system)
+Specialists: game-designer, systems-designer, economy-designer, narrative-director; senior: creative-director
+Blocking items: 2 (concept) + 2 (narrative bible) | Recommended: 10
+Summary: Concept-level trim accepted; all second-review blockers closed or partly closed (gate sections exist but several are Proposed drafts). Two concept blockers needed owner decisions: overlapping paid and Ember cosmetics, and an M1.5 gate that tested only that chains are possible. Both were decided and applied in the following commit; systems-designer would have approved.
+Prior verdict resolved: Yes (7 of 8 closed, 1 partly)
+Findings:
+- [BLOCKING] Core Identity: paid cosmetics vs Ember cosmetics (fixed: separate catalogs)
+- [BLOCKING] Design Risks: M1.5 gate lacked an experiential criterion (fixed: unprompted chain highlight)
+- [BLOCKING, bible] Crossing night: why it alone escaped the swap (Open, recorded in the bible)
+- [BLOCKING, bible] "Sour" as Ashmedai's mark in the bedroom (fixed: it is the smell of death and the first dog-perspective clue)
+- [RECOMMENDED] Pillar 1 offer rule may cut discovery (kept; M2 test risk added); pair = one option (index #14)
+- [RECOMMENDED] wording: action-or-total triggers, across 3 Nerlings, curated deck, not difficulty tiers, starting pick Proposed (fixed)
+- [RECOMMENDED] routed: Embers-per-minute quit farming, abandon payout, spark currency for Smith and Ashmedai (#19, #16); Nerling input unit, start >= 1, slot cap, turn-start draw, self-charge, enemy-turn events (#10); orphaned payoffs, empty-pool fallback (#14); door-quest gating, locked-door speaker, crossing-night frame (bible); Nerling partner beat; pitch wording
+
+Reviewed-Content-Hash: design/gdd/game-concept.md 2ff304a3ce5921536c02048ca020fe2cb08278c3
+Reviewed-Content-Hash: design/registry/entities.yaml dfeacb02917f751cb1dfd88cf490c7ec3d8d2d0f
+Reviewed-Content-Hash: .claude/skills/design-review/SKILL.md a63d8fba9b7142eeb43791f061e2e1533c429b43
+Reviewed-Content-Hash: design/gdd/systems-index.md 778a449655163d3131d641528cec928baf30cc65
+Reviewed-Content-Hash: design/narrative/narrative-bible.md 0eb42c37749d0ac5456ff81600a19e6d6a2864bf
+Reviewed-Content-Hash: design/art/art-bible.md 4e68264977eab2f43f6ce886965462089879df5d
+Reviewed-Content-Hash: prototypes/m1-combat-concept/REPORT.md 0ecf275264d18112d717be5e2781442bcdb1d31c
+Reviewed-Content-Hash: prototypes/m1-combat-concept/README.md 0e81c8f8786408faac3c8e83263d843a747ed88c
