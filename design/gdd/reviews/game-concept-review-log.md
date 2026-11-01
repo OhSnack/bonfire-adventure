@@ -36,3 +36,29 @@ Reviewed-Content-Hash: .claude/skills/design-review/SKILL.md a63d8fba9b7142eeb43
 Reviewed-Content-Hash: design/gdd/systems-index.md df7e6a27a83f41266e9f1a4ca22e3784911a0cdc
 Reviewed-Content-Hash: prototypes/m1-combat-concept/REPORT.md 0ecf275264d18112d717be5e2781442bcdb1d31c
 Reviewed-Content-Hash: prototypes/m1-combat-concept/README.md 0e81c8f8786408faac3c8e83263d843a747ed88c
+
+## Review — 2026-11-01 (second) — Verdict: NEEDS REVISION
+Review mode: full · Workflow: full
+Scope signal: n/a (concept, not a system)
+Specialists: game-designer, systems-designer, economy-designer, narrative-director; senior: creative-director
+Blocking items: 8 | Recommended: 9
+Summary: Six of seven prior blockers closed. Remaining: a pronoun-rule contradiction introduced in revision, a farmable "win?" payout, an unbounded loop path through output scaling, twist leaks via Ashmedai and memory-card text, and gate sections missing at workflow full. Fixed in 021afbf after owner decisions; detail moved to design/narrative/narrative-bible.md and systems-index #10, #14, #19.
+Prior verdict resolved: Partly (6 of 7)
+Findings:
+- [BLOCKING] Narrative Premise: pronoun rule contradicted its example (fixed: crossing night has no swap; Ashmedai's single planted line)
+- [BLOCKING] Core Mechanics: "win?" payout not once-only; failure vs clear pay; Ember sink (fixed in index #19; finite economy Proposed)
+- [BLOCKING] Narrative Premise / Long-Term: tier unlock stated two ways (fixed: first full clear, owner overrode the CD's advice)
+- [BLOCKING] Unique Hook: output growth could break loop termination (fixed: output never grows within a turn; step >= 1)
+- [BLOCKING] Unique Hook: carry-over could zero small bars (fixed: start + step bars, leftover charge carries capped one short of start)
+- [BLOCKING] Narrative Premise: Ashmedai's defeat and memory-card text could leak the twist (fixed: gated after the first Angel dialogue; hole text off the in-combat card face)
+- [BLOCKING] Narrative Premise: Ashmedai's first appearance (fixed: first room of the first region 3 visit, after the region 2 lie)
+- [BLOCKING] Gate sections: Visual Identity Anchor, aesthetics, motivation, market risks, pillar tests, M1.5 tier, Next Steps (added; drafts marked Proposed)
+- [RECOMMENDED] routed: overflow, slot cap, chain preview, payout rates, Ashmedai offer costs, hunter quest recast, art-bible clue-channel updates
+Reviewed-Content-Hash: design/gdd/game-concept.md 2ff304a3ce5921536c02048ca020fe2cb08278c3
+Reviewed-Content-Hash: design/registry/entities.yaml dfeacb02917f751cb1dfd88cf490c7ec3d8d2d0f
+Reviewed-Content-Hash: .claude/skills/design-review/SKILL.md a63d8fba9b7142eeb43791f061e2e1533c429b43
+Reviewed-Content-Hash: design/gdd/systems-index.md 778a449655163d3131d641528cec928baf30cc65
+Reviewed-Content-Hash: design/narrative/narrative-bible.md 0eb42c37749d0ac5456ff81600a19e6d6a2864bf
+Reviewed-Content-Hash: design/art/art-bible.md 4e68264977eab2f43f6ce886965462089879df5d
+Reviewed-Content-Hash: prototypes/m1-combat-concept/REPORT.md 0ecf275264d18112d717be5e2781442bcdb1d31c
+Reviewed-Content-Hash: prototypes/m1-combat-concept/README.md 0e81c8f8786408faac3c8e83263d843a747ed88c
