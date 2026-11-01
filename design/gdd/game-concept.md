@@ -104,7 +104,7 @@ skeleton child whose hair warms as memories return. Full direction:
 ## Player Experience Analysis (MDA Framework)
 
 ### Target Aesthetics
-*Proposed ranking (drafted 2026-11-01 from the pillar order, owner to confirm):*
+*Ranking (Decided 2026-11-01). "Aesthetics" in the MDA sense: the kind of fun the player feels, not the visuals.*
 1. **Challenge**: building and executing Nerling chains against full intent.
 2. **Narrative**: the reversed memories and the reveal.
 3. **Discovery**: new Nerling families, Ashmedai's pools, ending paths.
@@ -126,7 +126,7 @@ skeleton child whose hair warms as memories return. Full direction:
 
 ## Player Motivation Profile
 
-*Proposed (drafted 2026-11-01, owner to confirm):*
+*Decided 2026-11-01:*
 - **Competence**: deaths are explainable from visible intents and bars; chains reward
   planning. **Autonomy**: door choice, Nerling families, the starting-Nerling pick (Proposed).
   **Relatedness**: resident bonds and the dog's loyalty.
@@ -173,20 +173,20 @@ Offers along a run match what the hero already has: a payoff is offered only wit
 ### Pillar 2: Spirits as partners
 Nerlings charge from your actions and chain into combos.
 
-*Design test (Proposed)*: a feature that makes Nerlings matter more to the plan beats one that adds hero power directly.
+*Design test (Decided 2026-11-01)*: a feature that makes Nerling chains matter more to the plan beats one that adds hero power directly. A single unleash may be weaker than a hero upgrade; the payoff is the chain.
 
 ### Pillar 3: A story you earn
 Memories return as you progress; the skeleton visibly regains life.
 
-*Design test (Proposed)*: story progress is never lost on a failed run, and never bought with Embers.
+*Design test (Decided 2026-11-01)*: story progress is never lost on a failed run, and never bought with Embers.
 
 ### Pillar 4: Fair to players
 No pay-to-win, no money-milking.
 
-*Design test (Proposed)*: if a choice earns more by failing, quitting or paying than by playing well, change it.
+*Design test (Decided 2026-11-01)*: if a choice earns more by failing, quitting or paying than by playing well, change it.
 
 ### Anti-Pillars (What This Game Is NOT)
-- **NOT pay-to-win or money-milking**: no loot boxes, no streaks, no fake scarcity (Proposed ethics list).
+- **NOT pay-to-win or money-milking**: no loot boxes, no streaks, no fake scarcity (ethics list Decided 2026-11-01).
 - **NOT real-time action**: no Dodge in the base game; battles stay untimed.
 - **NOT graphic**: dark ideas through mood and suggestion only.
 
@@ -249,10 +249,10 @@ power, a soul for a soul); Spiritfarer and Hollow Knight scores; Coco.
 - The repo has no Android export setup; M0 needs Android running.
 
 ### Market Risks
-*Proposed (drafted 2026-11-01, owner to confirm):*
-- A crowded genre: deckbuilders after Slay the Spire and Balatro need a clear hook in the first minutes; the demo must show a chain.
-- Paid mobile games with a free demo convert poorly next to free-to-play; store pages must sell the story and the hook.
-- A solo developer's slow cadence can lose early-access interest.
+*Decided 2026-11-01, with mitigations.*
+- A crowded genre: deckbuilders after Slay the Spire and Balatro need a clear hook in the first minutes; the demo must show a chain. *Mitigation*: script the first battle so a Nerling chain fires within 2–3 minutes; the trailer and store screenshots open on a chain.
+- Paid mobile games with a free demo convert poorly next to free-to-play; store pages must sell the story and the hook. *Mitigation*: the demo is the whole first region and ends on a memory cliffhanger; one-time purchase, no ads; the store page leads with the story and the no-pay-to-win promise.
+- A solo developer's slow cadence can lose early-access interest. *Mitigation*: limit Systems Design to the 9 MVP systems; announce early access only once a buffer of finished content exists; a short regular devlog instead of promised dates.
 
 ### Scope Risks
 - Hades-style portraits with 3–4 expressions each are the biggest art cost.
