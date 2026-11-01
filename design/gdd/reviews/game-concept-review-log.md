@@ -86,3 +86,24 @@ Reviewed-Content-Hash: design/narrative/narrative-bible.md 0eb42c37749d0ac5456ff
 Reviewed-Content-Hash: design/art/art-bible.md 4e68264977eab2f43f6ce886965462089879df5d
 Reviewed-Content-Hash: prototypes/m1-combat-concept/REPORT.md 0ecf275264d18112d717be5e2781442bcdb1d31c
 Reviewed-Content-Hash: prototypes/m1-combat-concept/README.md 0e81c8f8786408faac3c8e83263d843a747ed88c
+
+## Review — 2026-11-01 (fourth) — Verdict: APPROVED
+Review mode: lean · Workflow: full
+Scope signal: n/a (concept, not a system)
+Specialists: none (lean confirmation of the third review's fixes)
+Blocking items: 0 | Recommended: 4
+Summary: Both concept blockers from the third review are closed (separate cosmetic catalogs; experiential M1.5 criterion) and the bible's "sour" blocker is fixed. The crossing-night swap exception is recorded Open in the narrative bible and gates only the door-quest fragments. Approved at concept level; detail lives in the bible and systems index.
+Prior verdict resolved: Yes
+Findings:
+- [RECOMMENDED] Core Mechanics: Ashmedai's bond must not unlock a memory before the first Angel dialogue (bible / Memories GDD)
+- [RECOMMENDED] Open Questions: hunter row Proposed while the bible marks it Open
+- [RECOMMENDED] Player Experience / Motivation / Market Risks / Pillar tests: Proposed drafts await owner confirmation
+- [RECOMMENDED] Elevator Pitch / Core Fantasy: "who you really are"; Nerling partner beat
+Reviewed-Content-Hash: design/gdd/game-concept.md 23ec5baccccb44361b3f697fc9137ebc00a4761b
+Reviewed-Content-Hash: design/registry/entities.yaml dfeacb02917f751cb1dfd88cf490c7ec3d8d2d0f
+Reviewed-Content-Hash: .claude/skills/design-review/SKILL.md a63d8fba9b7142eeb43791f061e2e1533c429b43
+Reviewed-Content-Hash: design/gdd/systems-index.md 60e4b20b693cedd2279eb2acbb49cb3dbb752980
+Reviewed-Content-Hash: design/narrative/narrative-bible.md 477c1a60d0dd47466316956a080f7a65b5d8c9c5
+Reviewed-Content-Hash: design/art/art-bible.md 4e68264977eab2f43f6ce886965462089879df5d
+Reviewed-Content-Hash: prototypes/m1-combat-concept/REPORT.md 0ecf275264d18112d717be5e2781442bcdb1d31c
+Reviewed-Content-Hash: prototypes/m1-combat-concept/README.md 0e81c8f8786408faac3c8e83263d843a747ed88c
