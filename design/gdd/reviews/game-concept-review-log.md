@@ -54,11 +54,10 @@ Findings:
 - [BLOCKING] Narrative Premise: Ashmedai's first appearance (fixed: first room of the first region 3 visit, after the region 2 lie)
 - [BLOCKING] Gate sections: Visual Identity Anchor, aesthetics, motivation, market risks, pillar tests, M1.5 tier, Next Steps (added; drafts marked Proposed)
 - [RECOMMENDED] routed: overflow, slot cap, chain preview, payout rates, Ashmedai offer costs, hunter quest recast, art-bible clue-channel updates
-Reviewed-Content-Hash: design/gdd/game-concept.md 2ff304a3ce5921536c02048ca020fe2cb08278c3
+Reviewed-Content-Hash: design/gdd/game-concept.md 29bcdaddd5575eff1f90ec30b6aa79c3cc06304c
 Reviewed-Content-Hash: design/registry/entities.yaml dfeacb02917f751cb1dfd88cf490c7ec3d8d2d0f
 Reviewed-Content-Hash: .claude/skills/design-review/SKILL.md a63d8fba9b7142eeb43791f061e2e1533c429b43
-Reviewed-Content-Hash: design/gdd/systems-index.md 778a449655163d3131d641528cec928baf30cc65
-Reviewed-Content-Hash: design/narrative/narrative-bible.md 0eb42c37749d0ac5456ff81600a19e6d6a2864bf
+Reviewed-Content-Hash: design/gdd/systems-index.md d88a0b5ec56c0a3f6a022817a689512e3da5847b
 Reviewed-Content-Hash: design/art/art-bible.md 4e68264977eab2f43f6ce886965462089879df5d
 Reviewed-Content-Hash: prototypes/m1-combat-concept/REPORT.md 0ecf275264d18112d717be5e2781442bcdb1d31c
 Reviewed-Content-Hash: prototypes/m1-combat-concept/README.md 0e81c8f8786408faac3c8e83263d843a747ed88c
