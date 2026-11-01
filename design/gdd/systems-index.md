@@ -35,7 +35,7 @@ Nerling trigger listens to its events.
 - **7 Turn, energy & deck** — turn phases (including when statuses tick), 4 energy, draw 6, piles, Fade, reshuffle.
 - **8 Health, block & statuses** — damage, block carried over up to a cap, and status stacks (Ignite, Weak; later Stun, Haunt, Linger).
 - **9 Enemies & encounters** — intent cycles, the enemy-turn forecast (a dry run of the enemy turn on a copy of the state), packs, win and loss, elites, bosses and the Angel of Death.
-- **10 Nerlings** — each Nerling is data: a trigger (any pipeline event plus a filter), a charge threshold, an unleash effect and a family (Ember, Tide, Mist, Root, Chaos). Owner decision: a companion may trigger more than once a turn; rather than a hard cap, each trigger in a turn raises the charge needed for the next, so firing once is easy and firing five times is very hard. Owner decision: Chaos has wild effects and unusual charge triggers, never randomness. Owner decisions 2026-11-01 (numbers provisional, validated by M1.5): triggers come mostly from hero actions, and another Nerling's unleash counts as an action. *Action* Nerlings gain 1 charge per qualifying action (a card or an unleash counts once, whatever its hits or targets); *amount* Nerlings count totals (damage, block, healing). Each bar has a start size and a step, grows by its step each time it fires in a turn, and returns to its start size next turn (demo Ember: start 2, step 1). One input fires a bar at most once; overflow is discarded. Output never grows within a turn, and the step is a whole number of at least 1, so loops end; an engineering fail-safe sits beyond legal play. Leftover charge carries to the next turn, capped one short of the start size; charge resets each fight. One Nerling at run start, a second in the first room; 5–8 unleashes per turn across 3 Nerlings by region 3 is the ceiling, and bosses bring spawns. A speed toggle and tap-to-skip are required. Chaos Nerlings come only from Ashmedai's dark pools (narrative bible). Proposed: choose the starting Nerling at the haven. Nerling offers follow the enabler rule in #14.
+- **10 Nerlings** — each Nerling is data: a trigger (any pipeline event plus a filter), a charge threshold, an unleash effect and a family (Ember, Tide, Mist, Root, Chaos). Owner decision: a companion may trigger more than once a turn; rather than a hard cap, each trigger in a turn raises the charge needed for the next, so firing once is easy and firing five times is very hard. Owner decision: Chaos has wild effects and unusual charge triggers, never randomness. Owner decisions 2026-11-01 (numbers provisional, validated by M1.5): triggers come mostly from hero actions, and another Nerling's unleash counts as an action. *Action* Nerlings gain 1 charge per qualifying action (a card or an unleash counts once, whatever its hits or targets); *amount* Nerlings count totals (damage, block, healing). Each bar has a start size and a step, grows by its step each time it fires in a turn, and returns to its start size next turn (demo Ember: start 2, step 1). One input fires a bar at most once; overflow is discarded. Output never grows within a turn, and the step is a whole number of at least 1, so loops end; an engineering fail-safe sits beyond legal play. Leftover charge carries to the next turn, capped one short of the start size; charge resets each fight. One Nerling at run start, a second in the first room; 5–8 unleashes per turn across 3 Nerlings by region 3 is the ceiling, and bosses bring spawns. A speed toggle and tap-to-skip are required (owned by #21 Combat UI). Chaos Nerlings come only from Ashmedai's dark pools (narrative bible). Proposed: choose the starting Nerling at the haven. Nerling offers follow the enabler rule in #14.
 - **11 Run map & doors** — regions, rooms of 2 encounters, a boss per region, a choice of 1 of 3 doors, door symbols and resonance. A pure graph, kept apart from room exploration so it can be tested.
 - **12 Room exploration** — isometric rooms, visible static enemies, ambush when touched from behind.
 - **13 Events & NPCs** — room objects with a choice panel; the event pool. Offers rewards through system 14 rather than defining its own rules.
@@ -74,10 +74,10 @@ Android and iOS export is a devops task for M0.
 | 11 | Run map & doors | Gameplay | Vertical Slice | Not Started | — | Seeded RNG, Game flow & run state |
 | 12 | Room exploration | Gameplay | Vertical Slice | Not Started | — | Run map & doors, Enemies & encounters |
 | 13 | Events & NPCs | Gameplay | Vertical Slice | Not Started | — | Run rewards & deck changes, Sparks & merchant, Story state |
-| 14 | Run rewards & deck changes | Progression | Vertical Slice | Not Started | — | Seeded RNG; Game flow & run state; Turn, energy & deck |
+| 14 | Run rewards & deck changes | Progression | Vertical Slice | Not Started | — | Seeded RNG; Game flow & run state; Turn, energy & deck; Nerlings |
 | 15 | Card upgrades (Smith) | Progression | Alpha | Not Started | — | Content data format, Run rewards & deck changes |
 | 16 | Sparks & merchant | Economy | Alpha | Not Started | — | Run rewards & deck changes |
-| 17 | Story state (inferred) | Narrative | Alpha | Not Started | — | Content data format |
+| 17 | Story state (inferred) | Narrative | Vertical Slice | Not Started | — | Content data format |
 | 18 | Memories, bonds, key cards & endings | Narrative | Alpha | Not Started | — | Story state, Run rewards & deck changes |
 | 19 | Run-end payout & meta progression | Progression | Alpha | Not Started | — | Game flow & run state; Sparks & merchant; Memories, bonds, key cards & endings |
 | 20 | Story scene player (inferred) | Narrative | Alpha | Not Started | — | Story state; Memories, bonds, key cards & endings |
@@ -87,7 +87,7 @@ Android and iOS export is a devops task for M0.
 | 24 | Accessibility & onboarding (inferred) | Meta | Alpha | Not Started | — | Combat UI, Run & meta UI |
 
 Notes on the table:
-- **Events & NPCs (13)** is in the Vertical Slice but lists two Alpha systems among its dependencies. In the slice, events offer only rewards from system 14. Shop and story hooks join once systems 16 and 17 are designed.
+- **Events & NPCs (13)** is in the Vertical Slice but lists one Alpha system, Sparks & merchant (16), among its dependencies. In the slice, events offer rewards from system 14 and read Story state (17); shop hooks join once system 16 is designed.
 - **Run & meta UI (22)** grows with each tier for the same reason.
 
 ---
@@ -113,20 +113,29 @@ Notes on the table:
 | Tier | Definition | Target Milestone | Design Urgency |
 |------|------------|------------------|----------------|
 | **MVP** | Required for the core loop to function. Without these, you can't test "is this fun?" | One production-quality battle (the M1 battle rebuilt on real systems) | Design FIRST |
-| **Vertical Slice** | Required for one complete, polished area. Demonstrates the full experience. | M2: one region, a boss, two Nerlings, one boon | Design SECOND |
+| **Vertical Slice** | Required for one complete, polished area. Demonstrates the full experience. | M2: one region, a boss, two Nerlings, one boon, plus a thin slice: one memory card, one colour stage and a short Nerling-priming tutorial (the full Memories #18 and Onboarding #24 systems stay in Alpha) | Design SECOND |
 | **Alpha** | All features present in rough form. Complete mechanical scope, placeholder content OK. | M3 public beta: polished region 1, haven with two residents | Design THIRD |
 | **Full Vision** | Polish, edge cases, nice-to-haves, and content-complete features. | 1.0: 3 regions, 2 mantles, first clear plus 1–2 endings (5 designed), difficulty tiers. No new systems; content on the systems above | Design as needed |
 
-> **Review notes (2026-11-01):** TD-SYSTEM-BOUNDARY, PR-SCOPE and CD-SYSTEMS were
-> skipped under lean review mode. An informal review by game-designer,
-> technical-director and narrative-director shaped this list (31 drafts merged to
-> 24); see the Overview.
+> **Review notes (2026-11-01, full):** TD-SYSTEM-BOUNDARY CONCERNS, PR-SCOPE OPTIMISTIC,
+> CD-SYSTEMS CONCERNS. None blocks; resolved by the owner's decisions above (phase
+> target, provisional Nerlings, Story state moved to the Vertical Slice, thin M2 story
+> slice). These reviews were skipped under lean mode when the index was written; an
+> informal review then merged 31 drafts to 24 (see the Overview). Requirements on the MVP GDDs:
+> - **#2 Action pipeline:** one snapshot/restore contract shared by the #9 forecast dry run and #5 Save. A dry run must not emit events or use RNG. Keep the keyword catalogue separate from the queue. Boon runtime uses the #2 listener model; #14 owns only the offers.
+> - **#1 Content data format:** reserve the enabler and payoff tags (#14's rule).
+> - **#7–#10:** each GDD has a section on the state it serializes.
+> - **#8 Health, block & statuses:** owns hero HP during combat and hands it to #4 at combat boundaries.
+> - **#10 Nerlings:** decide chain preview versus readable bars (Pillars 1 and 2). Write it as a hypothesis until M1.5.
+> - **#21 Combat UI:** owns the speed toggle and tap-to-skip (moved from #10), and reserves reduced-motion hooks for #24.
+>
+> **For later tiers:** #15 and #16 prefer upgrades that change chain math over flat numbers (Pillar 2 test). #12's ambush needs a stated pillar purpose and must stay visible and avoidable. NPC quests (bonds) need an owner, #13 or #18.
 
 ---
 
 ## Dependency Map
 
-### Foundation Layer (no dependencies)
+### Foundation Layer (depends only on other foundation systems)
 
 1. Content data format — every rule and piece of content is read from it.
 2. Seeded RNG — fair, reproducible draws and offers that a resume can recreate.
@@ -146,7 +155,7 @@ Notes on the table:
 ### Feature Layer (depends on core)
 
 1. Run map & doors — depends on: Seeded RNG, Game flow & run state
-2. Run rewards & deck changes — depends on: Seeded RNG; Game flow & run state; Turn, energy & deck
+2. Run rewards & deck changes — depends on: Seeded RNG; Game flow & run state; Turn, energy & deck; Nerlings
 3. Card upgrades (Smith) — depends on: Content data format, Run rewards & deck changes
 4. Sparks & merchant — depends on: Run rewards & deck changes
 5. Events & NPCs — depends on: Run rewards & deck changes, Sparks & merchant, Story state
@@ -183,6 +192,10 @@ Notes on the table:
 > Alpha, 1.0), not in this phase. Reason: the producer's gate concern that designing
 > all 24 at full rigor is about 200–240 h for one developer
 > (`production/gate-checks/gate-systems-design-2026-11-01-full.md`).
+> Target: about 14 weeks at ~7 h/week. Checkpoint after order 1: compare real hours
+> with the estimate (80–100 h for the phase) and re-plan. The Nerlings GDD (order 5)
+> is written in order, but its Formulas and Tuning Knobs stay provisional, and it
+> cannot be fully approved, until M1.5 passes.
 
 | Order | System | Priority | Layer | Agent(s) | Est. Effort |
 |-------|--------|----------|-------|----------|-------------|
@@ -195,13 +208,13 @@ Notes on the table:
 | 7 | Input & platform | MVP | Foundation | ux-designer | S |
 | 8 | Combat UI | MVP | Presentation | ux-designer, ui-programmer | M |
 | 9 | Game flow & run state | Vertical Slice | Foundation | technical-director | S |
-| 10 | Save & resume | Vertical Slice | Core | technical-director | M |
-| 11 | Run map & doors | Vertical Slice | Feature | level-designer, game-designer | M |
-| 12 | Run rewards & deck changes | Vertical Slice | Feature | game-designer, economy-designer | M |
-| 13 | Events & NPCs | Vertical Slice | Feature | game-designer, writer | M |
-| 14 | Room exploration | Vertical Slice | Feature | level-designer | M |
-| 15 | Run & meta UI | Vertical Slice | Presentation | ux-designer | M |
-| 16 | Story state | Alpha | Foundation | narrative-director, technical-director | S |
+| 10 | Story state | Vertical Slice | Foundation | narrative-director, technical-director | S |
+| 11 | Save & resume | Vertical Slice | Core | technical-director | M |
+| 12 | Run map & doors | Vertical Slice | Feature | level-designer, game-designer | M |
+| 13 | Run rewards & deck changes | Vertical Slice | Feature | game-designer, economy-designer | M |
+| 14 | Events & NPCs | Vertical Slice | Feature | game-designer, writer | M |
+| 15 | Room exploration | Vertical Slice | Feature | level-designer | M |
+| 16 | Run & meta UI | Vertical Slice | Presentation | ux-designer | M |
 | 17 | Memories, bonds, key cards & endings | Alpha | Feature | narrative-director, game-designer | L |
 | 18 | Sparks & merchant | Alpha | Feature | economy-designer | M |
 | 19 | Card upgrades (Smith) | Alpha | Feature | systems-designer | M |
@@ -228,7 +241,7 @@ Notes on the table:
 | Nerlings | Design | The hook (priming and chaining) is untested; the creative director's M1 concern | A hook-focused prototype early, using the pipeline |
 | Save & resume | Technical | Exact mid-turn resume needs the RNG streams, an empty queue and per-system snapshots | Save only at an empty queue; round-trip tests |
 | Story state, memories and the twist | Design | Twist clues must stay subtle (art bible dog-clue constraint), and their pacing across runs is unproven | Clue flags tracked per run; playtesters who don't know the twist |
-| Memory colour stages (art bible) | Technical | A world-only colour grade must leave icons and UI untouched, in both the Mobile and Compatibility renderers | A technical-artist spike before Alpha |
+| Memory colour stages (art bible) | Technical | A world-only colour grade must leave icons and UI untouched, in both the Mobile and Compatibility renderers | A technical-artist spike before the Vertical Slice |
 
 ---
 
@@ -241,7 +254,7 @@ Notes on the table:
 | Design docs reviewed | 0 |
 | Design docs approved | 0 |
 | MVP systems designed | 0/9 |
-| Vertical Slice systems designed | 0/7 |
+| Vertical Slice systems designed | 0/8 |
 
 ---
 
