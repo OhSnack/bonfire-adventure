@@ -318,6 +318,6 @@ doc's Content tab and in `prototypes/m1-combat-concept/REPORT.md`.
 - [x] `/setup-engine godot 4.7.2`
 - [x] `/prototype` the M1 combat
 - [x] `/map-systems`
-- [ ] Re-run `/design-review` on this file, then `/gate-check systems-design`
+- [x] Re-run `/design-review` on this file (APPROVED 2026-11-01), then `/gate-check systems-design` (CONCERNS 2026-11-01)
 - [ ] Hook prototype (M1.5)
 - [ ] `/design-system` per system, starting with Content data format and Action pipeline & event bus
